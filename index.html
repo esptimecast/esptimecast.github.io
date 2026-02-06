@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ESPTimeCast Official Site</title>
+  <style>
+    html{
+      box-sizing: border-box;
+    }
+
+    body {
+    font-family: Roboto, system-ui;
+    padding: 2rem 1rem;
+    height: 100%;
+    line-height: 1.5;
+    background: rgb(255, 255, 255);
+    color: #49454f;
+    margin: 0;
+    }
+
+    .card {
+    max-width: 500px;
+    width: 100%;
+    border-radius: 24px;
+    margin: auto;
+    overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px, rgba(0, 0, 0, 0.12) 0px 3px 44px;
+    }
+
+    .wrapper{
+      padding: 1.8rem;
+    }
+
+    h1 {
+    padding: 0 2.5rem;
+    margin-top: 0;
+    font-size: 1rem;
+    font-weight: normal;
+    text-align: right;
+    }
+
+    p {
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    .indent{
+    font-size: 0.84rem;
+    margin: 0.2rem 0 1rem 1.6rem !important;
+    }
+    
+    .logo{
+    width: 100%;
+    height: auto;
+    color: #c2f0ff;
+    box-sizing: border-box;
+    }
+
+    video{
+    display: block;
+    max-width: 100%;
+    height: auto;
+    }
+
+    .steps {
+      font-size: 0.9rem;
+      margin: 16px 0;
+      opacity: 0.85;
+    }
+
+    .steps p{
+    margin: 0.4rem 0 0 0.6rem;
+    }
+
+    esp-web-install-button {
+      margin-top: 24px;
+      display: block;
+      text-align: center;
+    }
+
+    .browser-warning {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      color: #d97706; /* amber-ish */
+      padding: 0 0.5rem;
+    }
+.modal-label{
+    line-height: 2rem;
+}
+
+.button-wrapper{
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+#start{
+  background-color: deepskyblue;
+    color: white;
+    border: 0;
+    padding: 1rem 2rem;
+    border-radius: 100vw;
+    font-size: unset;
+}
+
+    footer {
+      margin-top: 16px;
+      font-size: 0.75rem;
+      text-align: center;
+    }
+
+/* ===== MODAL BACKDROP ===== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+/* visible state */
+.modal-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ===== MODAL WINDOW ===== */
+.modal {
+  width: 92%;
+  max-width: 460px;
+  background: white;
+  border-radius: 20px;
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.25),
+    0 8px 20px rgba(0,0,0,0.12);
+
+  transform: translateY(-24px) scale(0.98);
+  opacity: 0;
+  transition:
+    transform 260ms cubic-bezier(.2,.9,.3,1),
+    opacity 200ms ease;
+}
+
+/* slide + fade in */
+.modal-backdrop.active .modal {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* ===== CONTENT ===== */
+.modal-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-status {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.modal-log {
+  padding: 0 1.25rem;
+  max-height: 240px;
+  overflow-y: auto;
+  font-size: 0.85rem;
+}
+
+.modal-actions {
+  padding: 1rem 1.25rem;
+  text-align: right;
+}
+
+.modal-actions button {
+  background: #eee;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+  </style>
+</head>
+<body>
+  <h1>ESPTimeCast Official Site</h1>
+  
+</body>
+</html>
