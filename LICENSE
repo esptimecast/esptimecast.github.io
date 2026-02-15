@@ -1,28 +1,21 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2822
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
-{\colortbl;\red255\green255\blue255;\red14\green14\blue14;}
-{\*\expandedcolortbl;;\cssrgb\c6700\c6700\c6700;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww21380\viewh14320\viewkind0
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl324\slmult1\pardirnatural\partightenfactor0
+ESPTimeCast Web Installer License
+Copyright (c) 2026 M-Factory
+All rights reserved.
 
-\f0\fs28 \cf2 ESPTimeCast Web Installer License\
-Copyright (c) 2026 M-Factory\
-All rights reserved.\
-\
-The ESPTimeCast Web Installer (including its source code, compiled assets, user interface, and hosted versions) is proprietary software.\
-\
-Permission is granted to use the official hosted version of this software solely for flashing unmodified, official ESPTimeCast firmware.\
-\
-No other rights are granted.\
-\
-You may not:\
-\
-- Copy, reproduce, or redistribute the software in whole or in part\
-- Modify, adapt, reverse engineer, or create derivative works\
-- Rebrand, reskin, or represent the software as your own\
-- Use the software to flash non-ESPTimeCast firmware\
-- Integrate or use the software in any commercial product or service without prior written permission\
-\
-For commercial licensing inquiries, contact: mario.felipe.tf@gmail.com\
-\
-This software is provided "as is", without warranty of any kind, express or implied.}
+The ESPTimeCast Web Installer (including its source code, compiled assets, user interface, and hosted versions) is proprietary software.
+
+Permission is granted to use the official hosted version of this software solely for flashing unmodified, official ESPTimeCast firmware.
+
+No other rights are granted.
+
+You may not:
+
+- Copy, reproduce, or redistribute the software in whole or in part
+- Modify, adapt, reverse engineer, or create derivative works
+- Rebrand, reskin, or represent the software as your own
+- Use the software to flash non-ESPTimeCast firmware
+- Integrate or use the software in any commercial product or service without prior written permission
+
+For commercial licensing inquiries, contact: mario.felipe.tf@gmail.com
+
+This software is provided "as is", without warranty of any kind, express or implied.
