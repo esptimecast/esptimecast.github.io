@@ -913,6 +913,7 @@ function resetSuccessAnimations() {
 }
 
 let subtitleTimeout = null;
+let hoverCount = 0;
 
 function initFooterSubtitles() {
     const icons = document.querySelectorAll(".icon-btn");
@@ -920,27 +921,43 @@ function initFooterSubtitles() {
 
     if (!icons.length || !subtitle) return;
 
+    const year = new Date().getFullYear();
+    const defaultText = `© ${year} ESPTimeCast. All rights reserved.`;
+
+    subtitle.textContent = defaultText;
+    subtitle.classList.add("visible", "default-text");
+
     icons.forEach(icon => {
         icon.addEventListener("mouseenter", () => {
-            const newText = icon.getAttribute("aria-label");
-            // Cancel any pending hide
+            hoverCount++;
             clearTimeout(subtitleTimeout);
-            // If text is different → fade out first
+
+            const newText = icon.getAttribute("aria-label");
+
             if (subtitle.textContent !== newText) {
                 subtitle.classList.remove("visible");
                 setTimeout(() => {
                     subtitle.textContent = newText;
+                    subtitle.classList.remove("default-text");
                     subtitle.classList.add("visible");
-                }, 100); // small fade gap
-            } else {
-                subtitle.classList.add("visible");
+                }, 100);
             }
         });
+
         icon.addEventListener("mouseleave", () => {
-            // Delay hide slightly to prevent flicker
+            hoverCount--;
+
             subtitleTimeout = setTimeout(() => {
-                subtitle.classList.remove("visible");
-            }, 75);
+                if (hoverCount === 0) {
+                    subtitle.classList.remove("visible");
+
+                    setTimeout(() => {
+                        subtitle.textContent = defaultText;
+                        subtitle.classList.add("default-text");
+                        subtitle.classList.add("visible");
+                    }, 120);
+                }
+            }, 250);
         });
     });
 }
