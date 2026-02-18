@@ -76,7 +76,7 @@ const READ_REG_PACKET = slipEncode([0x00, 0x0a, 0x04, 0x00, 0x00, 0x00, 0x00, 0x
 
 const manifest = {
     name: "ESPTimeCast",
-    version: "1.0.0",
+    version: "1.0.1",
     builds: []
 };
 
@@ -390,6 +390,17 @@ async function runFlasher() {
 /* ============================================================
    SECTION 7: FLASHING
    ============================================================ */
+function handleFlashStageMessage(msg) {
+    const lower = msg.toLowerCase();
+
+    if (lower.includes("erase") || lower.includes("erasing")) {
+        setFlashingTitle("Erasing flash…");
+    }
+    else if (lower.includes("writing")) {
+        setFlashingTitle("Writing firmware…");
+    }
+}
+
 async function flashFirmware(port, chip, firmwarePath) {
     log("Starting flash using esptool-js...");
     const initStart = Date.now();
@@ -432,6 +443,8 @@ async function flashFirmware(port, chip, firmwarePath) {
                     if (percent !== null) {
                         updateProgressRing(percent);
                     }
+
+                    handleFlashStageMessage(msg);
                 },
                 write: (msg) => {
                     log(msg);
@@ -454,8 +467,9 @@ async function flashFirmware(port, chip, firmwarePath) {
         if (initElapsed < 2000) {
             await sleep(2000 - initElapsed);
         }
+
         log("Uploading firmware...");
-        setFlashingTitle("Flashing firmware...");
+        //setFlashingTitle("Flashing firmware...");
         switchToProgressRing();
 
         const uint8 = new Uint8Array(contents);
@@ -873,7 +887,7 @@ function switchToProgressRing() {
 }
 
 function resetFlashingUI() {
-    setFlashingTitle("Initializing...");
+    setFlashingTitle("Preparing...");
     showLoader();
 
     // Hard reset animation state
