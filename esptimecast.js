@@ -902,7 +902,8 @@ function initFooterSubtitles() {
     if (!icons.length || !subtitle) return;
 
     const year = new Date().getFullYear();
-    const defaultText = `© ${year} ESPTimeCast. All rights reserved.`;
+    const version = manifest?.version ? ` v${manifest.version}` : "";
+    const defaultText = `© ${year} ESPTimeCast${version}`;
 
     subtitle.textContent = defaultText;
     subtitle.classList.add("visible", "default-text");
@@ -1081,7 +1082,10 @@ document.addEventListener("DOMContentLoaded", () => {
     initTerminalAutoscroll();
     cacheTerminalFooter();
     bindTerminalFooterEvents();
-
+    const footer = document.getElementById("footerVersion");
+    if (footer && manifest.version) {
+        footer.textContent = "v" + manifest.version;
+    }
 });
 
 
