@@ -1313,12 +1313,7 @@ function showTerminalToast(message, duration = 2000) {
 function initTerminalAutoscroll() {
     const saved = localStorage.getItem("terminalAutoscroll");
     terminalAutoscroll = saved !== "false";
-    const toggle = document.getElementById("terminalAutoscroll");
-    if (toggle) toggle.checked = terminalAutoscroll;
-    toggle?.addEventListener("change", () => {
-        terminalAutoscroll = toggle.checked;
-        localStorage.setItem("terminalAutoscroll", terminalAutoscroll);
-    });
+
     const el = document.getElementById("terminalOutput");
     if (el) {
         el.addEventListener("scroll", () => {
@@ -1326,7 +1321,8 @@ function initTerminalAutoscroll() {
                 el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
             if (!nearBottom) {
                 terminalAutoscroll = false;
-                toggle.checked = false;
+                const toggle = document.getElementById("terminalAutoscroll");
+                if (toggle) toggle.checked = false;
                 localStorage.setItem("terminalAutoscroll", "false");
             }
         });
@@ -1350,6 +1346,17 @@ function restoreTerminalFooter() {
 }
 
 function bindTerminalFooterEvents() {
+
+    const toggle = document.getElementById("terminalAutoscroll");
+
+    if (toggle) {
+        toggle.checked = terminalAutoscroll;
+        toggle.addEventListener("change", () => {
+            terminalAutoscroll = toggle.checked;
+            localStorage.setItem("terminalAutoscroll", terminalAutoscroll);
+        });
+    }
+
     document.getElementById("terminalClear")
         ?.addEventListener("click", () => {
             const out = document.getElementById("terminalOutput");
