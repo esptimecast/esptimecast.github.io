@@ -676,24 +676,13 @@
       }
 
       /* stagger each icon */
-      .footer-icons.animate .icon-btn:nth-child(1) {
-        animation-delay: 0.05s;
-      }
-      .footer-icons.animate .icon-btn:nth-child(2) {
-        animation-delay: 0.18s;
-      }
-      .footer-icons.animate .icon-btn:nth-child(3) {
-        animation-delay: 0.31s;
-      }
-      .footer-icons.animate .icon-btn:nth-child(4) {
-        animation-delay: 0.44s;
-      }
-      .footer-icons.animate .icon-btn:nth-child(5) {
-        animation-delay: 0.57s;
-      }
-      .footer-icons.animate .icon-btn:nth-child(6) {
-        animation-delay: 0.7s; /* new cog icon */
-      }
+      .footer-icons.animate .icon-btn:nth-child(1) { animation-delay: 0.05s; }
+      .footer-icons.animate .icon-btn:nth-child(2) { animation-delay: 0.18s; }
+      .footer-icons.animate .icon-btn:nth-child(3) { animation-delay: 0.31s; }
+      .footer-icons.animate .icon-btn:nth-child(4) { animation-delay: 0.44s; }
+      .footer-icons.animate .icon-btn:nth-child(5) { animation-delay: 0.57s; }
+      .footer-icons.animate .icon-btn:nth-child(6) { animation-delay: 0.70s; }
+      .footer-icons.animate .icon-btn:nth-child(7) { animation-delay: 0.83s; }
 
       @keyframes iconRise {
         0% {
@@ -930,6 +919,166 @@
           display: none;
         }
       }
+/* ================================
+   TERMINAL MODAL
+   ================================ */
+
+.terminal-window {
+  width: 750px;
+  max-width: calc(100% - 2rem);
+  height: 450px;
+
+  display: flex;
+  flex-direction: column;
+
+  border-radius: 24px;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 20px 36px rgba(40, 170, 255, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.25);
+
+  color: white;
+}
+
+
+/* HEADER */
+
+.terminal-header {
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.terminal-status {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+
+/* STATUS DOT */
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #888;
+  transition: all 0.25s ease;
+}
+
+.dot.gray {
+  background: #888;
+}
+
+.dot.green {
+  background: #2ecc71;
+  box-shadow: 0 0 8px rgba(46, 204, 113, 0.7);
+}
+
+.dot.red {
+  background: #ff4d4d;
+  box-shadow: 0 0 8px rgba(255, 77, 77, 0.7);
+}
+
+
+/* CLOSE BUTTON */
+
+.terminal-close {
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.terminal-close:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+
+/* TERMINAL OUTPUT */
+
+.terminal-output {
+flex: 1;
+    overflow-y: auto;
+    margin: 0.5rem 0 1rem 0;
+    padding: 1rem;
+    box-shadow: inset 0px 0px 24px #00000054;
+    background: rgb(0 0 0 / 20%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+
+/* FOOTER */
+
+.terminal-footer {
+    padding: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+}
+
+.terminal-footer button {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.terminal-footer button:hover {
+  background: var(--accent);
+}
+
+.terminal-buttons-wrapper{
+    display: flex;
+    gap: 0.8rem;
+}
+
+.terminal-footer > .toggle{
+  scale: 0.8;
+}
+
+#terminalOutput{
+  margin: 0;
+  margin-block: unset;
+}
+
+.terminal-toast {
+    position: absolute;
+    right: 1rem;
+    bottom: 4.5rem;
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 5;
+}
+
+.terminal-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
     </style>
   </head>
 
@@ -1089,6 +1238,21 @@
               <button class="primary" id="boot-mode-close">Close</button>
             </div>
           </section>
+
+          <section class="slide" data-slide="disconnected">
+            <div class="icon">
+              <img src="/img/esperror.png" alt="" />
+            </div>
+            <h2>Device disconnected</h2>
+            <p>
+            The ESP device connection was lost.<br />
+            Please reconnect the board and try again.
+            </p>
+            <div class="actions">
+            <button class="primary" id="disconnect-close">Close</button>
+            </div>
+          </section>
+
         </div>
         <!-- STEPPER -->
         <div class="stepper">
@@ -1170,6 +1334,15 @@
         href="#"
         target="_blank"
         rel="noopener noreferrer"
+        class="icon-btn icon-terminal"
+        aria-label="ESPTimeCast device terminal and logs"
+      >
+        <img src="/img/terminal.svg" alt="" aria-hidden="true" />
+      </a>
+      <a
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
         class="icon-btn icon-cog"
         aria-label="ESPTimeCast web installer settings"
       >
@@ -1201,6 +1374,41 @@
         </div>
       </div>
     </div>
+    <!-- TERMINAL MODAL -->
+    <div id="terminalModal" class="modal">
+      <div class="terminal-backdrop"></div>
+
+      <div class="terminal-window">
+
+        <div class="terminal-header">
+          <div class="terminal-status">
+            <span id="termStatusDot" class="dot gray"></span>
+            <span id="termStatusText">Connecting…</span>
+          </div>
+
+          <button id="terminalClose" class="terminal-close">×</button>
+        </div>
+
+        <pre id="terminalOutput" class="terminal-output"></pre>
+
+        <div class="terminal-footer">
+          <label class="toggle">
+            <input type="checkbox" id="terminalAutoscroll" checked />
+            <span class="slider round"></span>
+            <span class="toggle-label">Autoscroll</span>
+          </label>
+          <div class="terminal-buttons-wrapper">
+            <button id="terminalClear">Clear</button>
+            <button id="terminalCopy">Copy</button>
+            <button id="terminalDownload">Download</button>
+          </div>
+        </div>
+        <div id="terminalToast" class="terminal-toast"></div>
+
+      </div>
+    </div>
+    </div>
+
     <script type="module" src="esptimecast.js?v=1.0.1"></script>
   </body>
 </html>

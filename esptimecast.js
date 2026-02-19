@@ -1,6 +1,11 @@
-/**
- * ESPTimeCast Web Installer
- */
+
+// ================================
+// ESPTimeCast Web Installer
+// ================================
+
+/* ============================================================
+   SECTION 1-4: (UTILITIES, SLIP, PACKETS, MANIFEST) - UNCHANGED
+   ============================================================ */
 function isSupportedBrowser() {
     const isChromium = !!window.chrome && !!navigator.serial;
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -8,30 +13,28 @@ function isSupportedBrowser() {
 }
 import { Transport, ESPLoader } from './esptools.js';
 
-/* ============================================================
-   SECTION 1-4: (UTILITIES, SLIP, PACKETS, MANIFEST) - UNCHANGED
-   ============================================================ */
-async function safeClosePort(port) {
-    if (!port) return;
+async function finalizeConnection({ port, transport, reader, writer }) {
     try {
-        // Cancel any pending reads/writes
-        if (port.readable) {
-            try { await port.readable.cancel(); } catch (e) { }
+        if (reader) {
+            try { await reader.cancel(); } catch { }
+            try { reader.releaseLock(); } catch { }
         }
-        if (port.writable) {
-            try {
-                const writer = port.writable.getWriter();
-                writer.releaseLock();
-            } catch (e) { }
+        if (writer) {
+            try { writer.releaseLock(); } catch { }
         }
-        // Close the port itself
-        if (port.close) {
-            await port.close();
+        if (transport) {
+            try { await transport.disconnect(); } catch { }
         }
+        if (port) {
+            try { await port.close(); } catch { }
+            await new Promise(r => setTimeout(r, 50));
+        }
+        log("Connection finalized");
     } catch (e) {
-        log("⚠️ Error closing port: " + e.message);
+        log("⚠️ Finalize error: " + e.message);
     }
 }
+
 let currentInstallContext = null;
 const terminal = document.getElementById("terminal");
 const log = (...a) => console.log("[INFO]", ...a);
@@ -110,6 +113,18 @@ manifest.builds = [
     }
 ];
 
+
+if (navigator.serial) {
+    navigator.serial.addEventListener("disconnect", (event) => {
+        const port = event.target;
+        log("⚠️ Serial device disconnected");
+        // If this was the active install port → show boot mode screen
+        if (currentInstallContext) {
+            slideDisconnected();
+        }
+    });
+}
+
 /* ============================================================
    SECTION 5: INSTALL CONFIRMATION UI
    ============================================================ */
@@ -143,7 +158,8 @@ async function flashFirmwareWithRetry(port, chip, firmwarePath, maxRetries = 3) 
             // If it's a "fast" failure on attempt 1, try one quick re-detect
             if (attempt === 1 && chip === "ESP32-S2") {
                 log("⚠️ Fast failure. Cleaning up port for re-sync...");
-                await safeClosePort(currentPort); // Just close it, don't forget it
+                await finalizeConnection({ port: currentPort });
+                //await safeClosePort(currentPort); // Just close it, don't forget it
                 await sleep(1000);
                 currentPort = await detectESP32S2Port(); // This will find the existing authorized port without a popup
                 if (!currentPort) return;
@@ -336,15 +352,9 @@ async function runFlasher() {
         log("--------------------------");
 
         // Cleanup locks
-        writer.releaseLock();
-        reader.releaseLock();
+        await finalizeConnection({ port, reader, writer });
         writer = null;
         reader = null;
-
-        if (result !== "ESP32-S2") {
-            await port.close();
-            log("Port closed. Ready for flasher handover.");
-        }
 
         // Case A: Unknown ESP
         if (result === "Unknown ESP") {
@@ -381,10 +391,9 @@ async function runFlasher() {
         // Anything else is a real flash failure
         slideError();
     } finally {
-        if (writer) writer.releaseLock();
-        if (reader) reader.releaseLock();
+        try { writer?.releaseLock(); } catch { }
+        try { reader?.releaseLock(); } catch { }
     }
-
 }
 
 /* ============================================================
@@ -392,7 +401,6 @@ async function runFlasher() {
    ============================================================ */
 function handleFlashStageMessage(msg) {
     const lower = msg.toLowerCase();
-
     if (lower.includes("erase") || lower.includes("erasing")) {
         setFlashingTitle("Erasing flash…");
     }
@@ -407,19 +415,15 @@ async function flashFirmware(port, chip, firmwarePath) {
     if (chip === "ESP32-S2") {
         log("ESP32-S2: native USB handling enabled");
     }
-
     let transport = null;
     try {
         // Create transport with S2-specific settings
         const isNativeUSB = chip === "ESP32-S2" ||
             (chip === "ESP32-S3" && port.getInfo().usbVendorId === 0x303a) ||
             (chip === "ESP32-C3" && port.getInfo().usbVendorId === 0x303a);
-
         transport = new Transport(port, !isNativeUSB); // Invert: false = skip auto-open for native USB
-
         let baudrate = 460800;
         let connectMode = "default_reset";
-
         if (chip === "ESP32-S2") {
             baudrate = 115200; connectMode = "no_reset";
         } else if (chip === "ESP32") {
@@ -429,7 +433,6 @@ async function flashFirmware(port, chip, firmwarePath) {
         } else if (chip === "ESP32-S3" && isNativeUSB) {
             connectMode = "usb_reset"; baudrate = 460800;
         }
-
         const loader = new ESPLoader({
             transport,
             baudrate,
@@ -443,7 +446,6 @@ async function flashFirmware(port, chip, firmwarePath) {
                     if (percent !== null) {
                         updateProgressRing(percent);
                     }
-
                     handleFlashStageMessage(msg);
                 },
                 write: (msg) => {
@@ -451,27 +453,22 @@ async function flashFirmware(port, chip, firmwarePath) {
                 }
             }
         });
-
         log(`Connecting to ${chip}...`);
         await loader.main(connectMode);
         log(`Connected. Chip: ${loader.chip.CHIP_NAME}`);
-
         log("Fetching firmware...");
         const response = await fetch(firmwarePath);
         if (!response.ok) throw new Error(`Failed to fetch firmware: ${response.statusText}`);
         const contents = await response.arrayBuffer();
         log(`Firmware loaded: ${contents.byteLength} bytes`);
-
         // Ensure Initializing is visible at least 1.5s
         const initElapsed = Date.now() - initStart;
         if (initElapsed < 2000) {
             await sleep(2000 - initElapsed);
         }
-
         log("Uploading firmware...");
         //setFlashingTitle("Flashing firmware...");
         switchToProgressRing();
-
         const uint8 = new Uint8Array(contents);
         let binaryString = "";
         const CHUNK_SIZE = 8192;
@@ -501,81 +498,50 @@ async function flashFirmware(port, chip, firmwarePath) {
             }
         }
         );
-        // 🔹 Flash finished
+        // Flash finished
         const finalizeStart = Date.now();
-
         setFlashingTitle("Finalizing...");
         updateProgressRing(100);
-
         // Ensure Finalizing is visible at least 1.5s
         const finalizeElapsed = Date.now() - finalizeStart;
         if (finalizeElapsed < 2000) {
             await sleep(2000 - finalizeElapsed);
         }
-
         log("Flash complete. Rebooting device...");
-
         try {
             if (chip === "ESP8266" || chip === "ESP32" || (chip === "ESP32-S3" && port.getInfo().usbVendorId !== 0x303a)) {
-                // Perform reset for UART boards, including ESP32-S3 if connected via UART
                 log(`Will perform UART reset for ${chip}...`);
-
-                await transport.setDTR(false); // Pull DTR low to reset
-                await sleep(100);             // Short delay for stabilization
-                await transport.setDTR(true); // Release DTR
-                await transport.disconnect(); // Disconnect the transport
+                await transport.setDTR(false);
+                await sleep(100);
+                await transport.setDTR(true);
                 log(`✅ ${chip} UART reset complete.`);
                 installSuccess(true);
-            } else if (chip === "ESP32-S3" && port.getInfo().usbVendorId === 0x303a) {
-                // ESP32-S3 connected via OTG (Native USB)
-                log("UART reset not available on ESP32-S3 connected via OTG (Native USB). Skipping reset.");
-                installSuccess(false);
             } else {
-                // Skip reset for other native USB boards
-                installSuccess(false);
                 log(`UART reset not available on this board: ${chip}`);
+                installSuccess(false);
             }
         } catch (e) {
-            // Handle errors during reset
             log("⚠️ Reboot handling failed: " + e.message);
-            // Ensure the transport is cleaned up
-            try { await transport.disconnect(); } catch (disconnectError) {
-                log("Transport disconnect failed: " + disconnectError.message);
-            }
+            installSuccess(false);
         }
-
-
         log("Installation complete! Device should now reboot.");
-
-        try {
-            // Make absolutely sure transport is gone
-            try { await transport?.disconnect(); } catch { }
-            // Explicitly close the Web Serial port so the browser releases it
-            if (port?.readable || port?.writable) {
-                await port.close();
-                log("🔌 Serial port closed cleanly");
-            }
-        } catch (e) {
-            log("⚠️ Final port cleanup failed: " + e.message);
-        }
     } catch (err) {
         log("❌ Flash Error: " + err.message);
         console.error(err);
-        // Aggressive cleanup
-        try {
-            if (transport) await transport.disconnect();
-        } catch (e) {
-            log("Disconnect error: " + e.message);
-        }
-        await safeClosePort(port);
         throw err;
+    } finally {
+        try {
+            await finalizeConnection({ port, transport });
+        } catch (cleanupError) {
+            log("Cleanup error: " + cleanupError.message);
+        }
     }
 }
 
 
-//** 
-//progress indicator
-//** 
+// ================================
+// PROGRESS INDICATOR
+// ================================
 function parseFlashProgress(msg) {
     const match = msg.match(/\((\d+)%\)/);
     if (!match) return null;
@@ -586,8 +552,6 @@ let progressRingBar = null;
 let progressText = null;
 let progressWrapper = null;
 let progressCircumference = 0;
-
-
 
 function ensureProgressRing() {
     const status = document.getElementById("flashing-status");
@@ -641,33 +605,26 @@ function showProgressRing() {
 
 function updateProgressRing(percent) {
     if (!progressRingBar) return;
-
     targetProgress = Math.max(0, Math.min(100, percent));
-
     if (!progressAnimationFrame) {
         const step = () => {
             const diff = targetProgress - visualProgress;
-
             if (Math.abs(diff) < 0.1) {
                 visualProgress = targetProgress;
             } else {
                 visualProgress += diff * 0.15; // smooth easing
             }
-
             const offset =
                 progressCircumference -
                 (visualProgress / 100) * progressCircumference;
-
             progressRingBar.style.strokeDashoffset = offset;
             progressText.textContent = `${Math.round(visualProgress)}%`;
-
             if (visualProgress !== targetProgress) {
                 progressAnimationFrame = requestAnimationFrame(step);
             } else {
                 progressAnimationFrame = null;
             }
         };
-
         progressAnimationFrame = requestAnimationFrame(step);
     }
 }
@@ -676,9 +633,9 @@ let visualProgress = 0;
 let targetProgress = 0;
 let progressAnimationFrame = null;
 
-//**
-//screens
-//**
+// ================================
+// SCREENS
+// ================================
 async function slideFlashing() {
     goToSlide("flashing");
     resetFlashingUI();
@@ -737,6 +694,15 @@ function slideBootmode() {
 function slideError() {
     goToSlide("error");
     document.getElementById("error-close").onclick = () => {
+        log("User cancelled installation");
+        goToSlide("hero");
+        resetHints();
+    };
+}
+
+function slideDisconnected() {
+    goToSlide("disconnected");
+    document.getElementById("disconnect-close").onclick = () => {
         log("User cancelled installation");
         goToSlide("hero");
         resetHints();
@@ -945,9 +911,7 @@ function initFooterSubtitles() {
         icon.addEventListener("mouseenter", () => {
             hoverCount++;
             clearTimeout(subtitleTimeout);
-
             const newText = icon.getAttribute("aria-label");
-
             if (subtitle.textContent !== newText) {
                 subtitle.classList.remove("visible");
                 setTimeout(() => {
@@ -960,11 +924,9 @@ function initFooterSubtitles() {
 
         icon.addEventListener("mouseleave", () => {
             hoverCount--;
-
             subtitleTimeout = setTimeout(() => {
                 if (hoverCount === 0) {
                     subtitle.classList.remove("visible");
-
                     setTimeout(() => {
                         subtitle.textContent = defaultText;
                         subtitle.classList.add("default-text");
@@ -1115,8 +1077,303 @@ document.addEventListener("DOMContentLoaded", () => {
             closeModal();
         }
     });
-
     document.body.classList.add("loaded");
+    initTerminalAutoscroll();
+    cacheTerminalFooter();
+    bindTerminalFooterEvents();
 
 });
 
+
+// ================================
+// TERMINAL
+// ================================
+
+let terminalPort = null;
+let terminalReader = null;
+let terminalKeepReading = false;
+let terminalLineBuffer = "";
+let terminalAutoscroll = true;
+let terminalFooterOriginalHTML = null;
+
+// ---------- STATUS UI ----------
+
+function setTerminalStatus(state, text) {
+    const dot = document.getElementById("termStatusDot");
+    const label = document.getElementById("termStatusText");
+    if (!dot || !label) return;
+    dot.className = "dot"; // reset
+    if (state === "connected") dot.classList.add("green");
+    else if (state === "error") dot.classList.add("red");
+    else dot.classList.add("gray");
+    label.textContent = text || "";
+}
+
+// ---------- OUTPUT ----------
+
+function terminalWrite(text, addTimestamp = true) {
+    const el = document.getElementById("terminalOutput");
+    if (!el) return;
+    terminalLineBuffer += text;
+    let lines = terminalLineBuffer.split("\n");
+
+    // keep last partial line in buffer
+    terminalLineBuffer = lines.pop();
+    let output = "";
+    for (const line of lines) {
+        if (addTimestamp && line.trim() !== "") {
+            let formattedLine = line;
+            // Detect JSON payload
+            const jsonStart = line.indexOf("{");
+            if (jsonStart !== -1) {
+                const possibleJson = line.substring(jsonStart);
+                try {
+                    const obj = JSON.parse(possibleJson);
+                    const pretty = JSON.stringify(obj, null, 2);
+                    formattedLine =
+                        line.substring(0, jsonStart) +
+                        "\n" +
+                        pretty;
+                } catch {
+                    // not valid JSON → ignore
+                }
+            }
+            const now = new Date();
+            const time =
+                String(now.getHours()).padStart(2, "0") + ":" +
+                String(now.getMinutes()).padStart(2, "0") + ":" +
+                String(now.getSeconds()).padStart(2, "0");
+
+            output += `[${time}] ${formattedLine}\n`;
+        } else {
+            output += line + "\n";
+        }
+    }
+    el.textContent += output;
+    if (terminalAutoscroll) {
+        el.scrollTop = el.scrollHeight;
+    }
+}
+
+// ---------- CONNECT ----------
+
+async function connectTerminal() {
+    try {
+        setTerminalStatus("connecting", "Connecting…");
+        const output = document.getElementById("terminalOutput");
+        if (output) output.textContent = "";   // clear window
+        terminalPort = await navigator.serial.requestPort();
+        await terminalPort.open({ baudRate: 115200 });
+        terminalKeepReading = true;
+        readTerminalLoop();
+        setTerminalStatus("connected", "Connected to ESP Board @115200");
+        terminalWrite("=== Connected ===\n\n", false);
+    } catch (err) {
+        console.error(err);
+        setTerminalStatus("error", "Connection failed");
+    }
+}
+
+// ---------- READ LOOP ----------
+
+async function readTerminalLoop() {
+    const decoder = new TextDecoder();
+    try {
+        terminalReader = terminalPort.readable.getReader();
+        while (terminalKeepReading) {
+            const { value, done } = await terminalReader.read();
+            if (done) break;
+            if (value) {
+                terminalWrite(decoder.decode(value));
+            }
+        }
+    } catch (err) {
+        console.warn("Terminal read error:", err);
+        // Device reset / USB lost
+        if (err?.message?.includes("device has been lost")) {
+            terminalWrite(
+                "\n=== Device reset/disconnection detected. ===\n" +
+                "=== Please close this window and reconnect.===\n", false
+            );
+            setTerminalStatus("error", "Device disconnected");
+            setTerminalDisconnectedUI();
+            disconnectTerminal(true);   // no await
+        } else {
+            terminalWrite("\nSerial error.\n");
+            setTerminalStatus("error", "Serial error");
+        }
+    } finally {
+        if (terminalReader) {
+            try { terminalReader.releaseLock(); } catch { }
+            terminalReader = null;
+        }
+    }
+}
+
+// ---------- DISCONNECT ----------
+
+async function disconnectTerminal(silent = false) {
+    terminalKeepReading = false;
+    try {
+        if (terminalReader) {
+            try { await terminalReader.cancel(); } catch { }
+            try { terminalReader.releaseLock(); } catch { }
+            terminalReader = null;
+        }
+        if (terminalPort) {
+            try { await terminalPort.close(); } catch { }
+            terminalPort = null;
+        }
+    } catch (err) {
+        console.warn("Disconnect error:", err);
+    }
+    if (!silent) {
+        setTerminalStatus("idle", "Disconnected");
+        terminalWrite("\n=== Disconnected ===\n", false);
+    }
+}
+
+// ---------- MODAL OPEN ----------
+
+async function openTerminalModal(e) {
+    if (e) e.preventDefault();
+    const modal = document.getElementById("terminalModal");
+    if (!modal) return;
+    cacheTerminalFooter();      // ensure saved
+    restoreTerminalFooter();    // restore buttons
+    modal.classList.remove("hide");
+    modal.classList.add("show");
+    await connectTerminal();
+}
+
+// ---------- MODAL CLOSE ----------
+
+async function closeTerminalModal() {
+    const modal = document.getElementById("terminalModal");
+    const output = document.getElementById("terminalOutput");
+    await disconnectTerminal();
+    if (output) output.textContent = "";
+    if (!modal) return;
+    modal.classList.add("hide");
+    setTimeout(() => {
+        modal.classList.remove("show");
+        modal.classList.remove("hide");
+    }, 300);
+}
+
+// ---------- BUTTONS ----------
+
+document.querySelector(".icon-terminal")
+    ?.addEventListener("click", openTerminalModal);
+document.getElementById("terminalClose")
+    ?.addEventListener("click", (e) => {
+        e.preventDefault();
+        closeTerminalModal();
+    });
+
+// click outside closes
+document.getElementById("terminalModal")
+    ?.addEventListener("click", (e) => {
+        if (e.target.id === "terminalModal") {
+            closeTerminalModal();
+        }
+    });
+
+// ESC closes modal
+document.addEventListener("keydown", (e) => {
+    const modal = document.getElementById("terminalModal");
+    if (e.key === "Escape" && modal?.classList.contains("show")) {
+        closeTerminalModal();
+    }
+});
+
+function setTerminalDisconnectedUI() {
+    const footer = document.querySelector(".terminal-footer");
+    if (!footer) return;
+    footer.innerHTML = `
+        <button id="terminalCloseBtn" class="primary">Close</button>`;
+    document.getElementById("terminalCloseBtn")
+        ?.addEventListener("click", (e) => {
+            e.preventDefault();
+            closeTerminalModal();
+        });
+}
+
+function showTerminalToast(message, duration = 2000) {
+    const toast = document.getElementById("terminalToast");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toast._hideTimer);
+    toast._hideTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, duration);
+}
+
+function initTerminalAutoscroll() {
+    const saved = localStorage.getItem("terminalAutoscroll");
+    terminalAutoscroll = saved !== "false";
+    const toggle = document.getElementById("terminalAutoscroll");
+    if (toggle) toggle.checked = terminalAutoscroll;
+    toggle?.addEventListener("change", () => {
+        terminalAutoscroll = toggle.checked;
+        localStorage.setItem("terminalAutoscroll", terminalAutoscroll);
+    });
+    const el = document.getElementById("terminalOutput");
+    if (el) {
+        el.addEventListener("scroll", () => {
+            const nearBottom =
+                el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
+            if (!nearBottom) {
+                terminalAutoscroll = false;
+                toggle.checked = false;
+                localStorage.setItem("terminalAutoscroll", "false");
+            }
+        });
+    }
+}
+
+function cacheTerminalFooter() {
+    const footer = document.querySelector(".terminal-footer");
+    if (!footer) return;
+    if (!terminalFooterOriginalHTML) {
+        terminalFooterOriginalHTML = footer.innerHTML;
+    }
+}
+
+function restoreTerminalFooter() {
+    const footer = document.querySelector(".terminal-footer");
+    if (!footer || !terminalFooterOriginalHTML) return;
+    footer.innerHTML = terminalFooterOriginalHTML;
+    // rebind events because we recreated DOM
+    bindTerminalFooterEvents();
+}
+
+function bindTerminalFooterEvents() {
+    document.getElementById("terminalClear")
+        ?.addEventListener("click", () => {
+            const out = document.getElementById("terminalOutput");
+            if (out) out.textContent = "";
+        });
+    document.getElementById("terminalCopy")
+        ?.addEventListener("click", async () => {
+            const text = document.getElementById("terminalOutput")?.textContent || "";
+            try {
+                await navigator.clipboard.writeText(text);
+                showTerminalToast("Log copied to clipboard");
+            } catch {
+                showTerminalToast("Copy failed");
+            }
+        });
+    document.getElementById("terminalDownload")
+        ?.addEventListener("click", () => {
+            const text = document.getElementById("terminalOutput")?.textContent || "";
+            const blob = new Blob([text], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "esptimecast-log.txt";
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+}
