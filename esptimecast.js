@@ -14,6 +14,7 @@ function isSupportedBrowser() {
 import { Transport, ESPLoader } from './esptools.js';
 
 async function finalizeConnection({ port, transport, reader, writer }) {
+    currentInstallContext = null;
     try {
         if (reader) {
             try { await reader.cancel(); } catch { }
@@ -642,6 +643,7 @@ async function slideFlashing() {
 }
 
 function installSuccess(isUart = true) {
+    currentInstallContext = null;
 
     const message = isUart
         ? "<b>ESPTimeCast</b> is now running."
