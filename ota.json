@@ -1,5 +1,5 @@
 {
-  "version": "1.2.3",
+  "version": "1.2.4",
   "bins": {
     "esp32": "https://esptimecast.github.io/bins/v1.2.3/esp32_app.bin",
     "esp32s2": "https://esptimecast.github.io/bins/v1.2.3/esp32s2_app.bin",
