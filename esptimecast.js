@@ -80,7 +80,7 @@ const READ_REG_PACKET = slipEncode([0x00, 0x0a, 0x04, 0x00, 0x00, 0x00, 0x00, 0x
 
 const manifest = {
     name: "ESPTimeCast",
-    version: "1.4.0",
+    version: "1.4.1",
     builds: []
 };
 
@@ -646,8 +646,10 @@ function installSuccess(isUart = true) {
     currentInstallContext = null;
 
     const message = isUart
-        ? "<b>ESPTimeCast</b> is now running."
-        : "Press <b>RESET</b> or reconnect to start <b>ESPTimeCast</b>.";
+    ? "<b>ESPTimeCast</b> is now running.<br>Enjoying the project? Consider supporting it."
+    : "Press <b>RESET</b> or reconnect to start <b>ESPTimeCast</b>.<br>Enjoying the project? Consider supporting it.";
+
+document.getElementById("success-message").innerHTML = message;
 
     document.getElementById("success-message").innerHTML = message;
 
@@ -677,11 +679,11 @@ function installSuccess(isUart = true) {
         footerIcons?.classList.add("animate");
     }, 1100);
 
-    document.getElementById("reflash").onclick = () => {
-        resetSuccessAnimations();
-        goToSlide("hero");
-        resetHints();
-    };
+    // document.getElementById("reflash").onclick = () => {
+    //     resetSuccessAnimations();
+    //     goToSlide("hero");
+    //     resetHints();
+    // };
 }
 
 function slideBootmode() {
