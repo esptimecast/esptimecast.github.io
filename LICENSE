@@ -1,20 +1,21 @@
-ESPTimeCast Web Installer License
-Copyright (c) 2026 M-Factory
+ESPTimeCast Web Installer License  
+Copyright (c) 2026 M-Factory  
 All rights reserved.
 
-The ESPTimeCast Web Installer (including its source code, compiled assets, user interface, and hosted versions) is proprietary software.
+The ESPTimeCast Web Installer (including its original source code, compiled assets, user interface, and hosted versions) is proprietary software.
+
+This project may include third-party components licensed under the Apache License 2.0 and other open-source licenses.  
+Those components remain subject to their respective licenses.
 
 Permission is granted to use the official hosted version of this software solely for flashing unmodified, official ESPTimeCast firmware.
 
-No other rights are granted.
+No other rights are granted for the proprietary portions of this software.
 
 You may not:
 
-- Copy, reproduce, or redistribute the software in whole or in part
-- Modify, adapt, reverse engineer, or create derivative works
-- Rebrand, reskin, or represent the software as your own
-- Use the software to flash non-ESPTimeCast firmware
-- Integrate or use the software in any commercial product or service without prior written permission
+- Rebrand, reskin, or represent the software as your own  
+- Use the software to flash non-ESPTimeCast firmware  
+- Integrate or use the proprietary portions of this software in any commercial product or service without prior written permission  
 
 For commercial licensing inquiries, contact: mario.felipe.tf@gmail.com
 
