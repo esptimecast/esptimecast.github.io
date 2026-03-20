@@ -3,7 +3,6 @@ Privacy Policy for ESPTimeCast Browser Extension
 Overview
 
 ESPTimeCast Browser Extension does not collect, store, or share personal user data.
-The extension only communicates with devices explicitly configured by the user.
 
 Data Usage
 
@@ -21,7 +20,7 @@ No user data is stored locally or remotely by the extension.
 Data Sharing
 
 The extension does not transmit data to any external servers.
-All communication occurs միայն between the browser and user-configured devices on the local network.
+All communication occurs only between the browser and devices explicitly configured by the user on their local network.
 
 Personal Information
 
