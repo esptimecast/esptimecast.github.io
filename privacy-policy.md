@@ -1,7 +1,3 @@
----
-title: Privacy Policy
----
-
 Privacy Policy for ESPTimeCast Browser Extension
 
 Overview
