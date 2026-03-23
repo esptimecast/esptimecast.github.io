@@ -22,12 +22,15 @@
         --glass-border: rgba(255, 255, 255, 0.12);
       }
 
+      html{
+        background: var(--bg-gradient);
+      }
+
       html,
       body {
         height: 100%;
         margin: 0;
         font-family: Roboto, system-ui;
-        background: var(--bg-gradient);
         color: white;
         position: relative;
         z-index: 0;
@@ -35,13 +38,14 @@
         background-attachment: fixed;
         background-repeat: no-repeat;
         transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        scroll-behavior: smooth;
       }
 
       body {
-        display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
+        overflow-y: visible;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         opacity: 0;
@@ -54,10 +58,12 @@
       }
 
       .layout {
-        margin-top: -8vh;
+        height: calc(100vh + 8vh);
+        width: 100%;
         display: flex;
         align-items: center;
-        max-width: 100%;
+        margin-top: -8vh;
+        background-repeat: no-repeat;
       }
 
       h2 {
@@ -195,6 +201,12 @@
       .manual-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 14px 40px rgba(14, 165, 233, 0.65);
+      }
+
+      .text-link{
+        color: white;
+        margin-top: 0.8rem;
+        font-size: 0.8rem;
       }
 
       /* ===== STEPPER ===== */
@@ -604,9 +616,72 @@
         }
       }
 
+      .content-wrapper{
+        color: #110f2e;
+        background-color: white;
+        width: 100%;
+      }
+
+      .content{
+        max-width: 700px;
+        padding: 1.5rem;
+        margin: auto;
+        padding-top: 3rem;      
+        }
+
+      .content h2{
+        font-size: 1.5rem;
+        font-weight: 500;
+      }
+
+      .content-section{
+        margin-bottom: 3.5rem;
+      }
+
+      .content-section {
+        scroll-margin-top: 3rem;
+      }
+
+      .indent{
+        padding-left: 1.5rem;
+      }
+
+      .caption{
+        font-size: 0.9rem;
+        color: gray;
+        font-style: italic;
+        text-align: center;
+      }
+
+      .feature-list {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+      }
+
+      .feature-list li {
+        margin-bottom: 0.6rem;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+        padding: 0 1.5rem;
+      }
+
+      .feature {
+        padding: 1.2rem;
+        border-radius: 12px;
+        background: rgb(0 0 0 / 3%);
+      }
+
       .footer-icons {
         position: absolute;
-        bottom: 2.5rem;
+        bottom: 0;
         width: 100%;
         display: flex;
         justify-content: center;
@@ -682,7 +757,7 @@
       .footer-icons.animate .icon-btn:nth-child(4) { animation-delay: 0.44s; }
       .footer-icons.animate .icon-btn:nth-child(5) { animation-delay: 0.57s; }
       .footer-icons.animate .icon-btn:nth-child(6) { animation-delay: 0.70s; }
-      .footer-icons.animate .icon-btn:nth-child(7) { animation-delay: 0.83s; }
+      /* .footer-icons.animate .icon-btn:nth-child(7) { animation-delay: 0.83s; } */
 
       @keyframes iconRise {
         0% {
@@ -749,11 +824,8 @@
         body {
           flex-direction: column;
         }
-
-        .footer-icons {
-          bottom: calc(2.5rem + 60px);
-        }
       }
+      
       .modal {
         position: fixed;
         inset: 0;
@@ -901,7 +973,7 @@
       @media (max-height: 700px) {
         .footer-icons {
           top: auto;
-          bottom: 1.5rem;
+          bottom: -1.5rem;
           right: 1.5rem;
           transform: none;
           flex-direction: row;
@@ -1071,6 +1143,134 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        video{
+          margin-top: 1rem;
+          margin-bottom: 0.4rem;
+        }
+
+        .carousel {
+          position: relative;
+          overflow: hidden;
+          margin-bottom: 3.5rem;
+        }
+
+        /* left + right fade */
+        .carousel::before,
+        .carousel::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          width: 24px;
+          height: 100%;
+          z-index: 2;
+          pointer-events: none;
+        }
+
+        /* left fade */
+        .carousel::before {
+          left: 0;
+          background: linear-gradient(to right, #ffffff, transparent);
+        }
+
+        /* right fade */
+        .carousel::after {
+          right: 0;
+          background: linear-gradient(to left, hsl(0, 0%, 100%), transparent);
+        }
+
+        .carousel-track {
+          display: flex;
+          gap: 1rem;
+          width: max-content;
+          animation: scroll 120s linear infinite;
+        }
+
+        .carousel img {
+          height: 140px;
+          border-radius: 10px;
+          flex-shrink: 0;
+          transition: transform 0.2s ease;
+        }
+
+        .carousel img:hover {
+          filter: opacity(0.5);
+        }
+
+        /* auto scroll */
+        @keyframes scroll {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+
+        .case-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 2rem;
+          margin-top: 1.5rem;
+        }
+
+        .case-card {
+          text-align: center;
+        }
+
+        .case-card img {
+          width: 100%;
+          border-radius: 12px;
+          margin-bottom: 0.4rem;
+        }
+
+        .case-card h3 {
+          margin-top: 0.8rem;
+        }
+
+        .page-button {
+          color: black;
+          text-decoration: unset;
+          background: #eee;
+          border: none;
+          padding: 0.6rem 1.2rem;
+          border-radius: 999px;
+          cursor: pointer;
+        }
+
+        .page-button:hover{
+        background: var(--accent);
+        color: white;
+        cursor: pointer;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .quick-build{
+          display: flex;
+          flex-direction: column;
+          justify-items: center;
+          align-items: center;
+        }
+
+        .extension > .quick-build{
+          margin-top: 1.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .extension-preview{
+          text-align: center;
+        }
+
+        .extension-preview img {
+          display: inline-block;
+          width: 100%;
+          max-width: 450px;
+          height: auto;
+          border-radius: 12px;
+          box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        #build > .quick-build{
+          margin-top: 2rem;
+          gap: 1.5rem;
+        }
     </style>
   </head>
 
@@ -1085,7 +1285,10 @@
             <div class="hero-subtitle">
               Time &amp; weather,<br />beautifully displayed.
             </div>
-            <button id="start">Start</button>
+            <button id="start">Install Now</button>
+            <a href="#manual" class="text-link">
+              Having trouble? Install manually ↓
+            </a>
           </section>
 
           <!-- SLIDE: DETECTING -->
@@ -1268,83 +1471,343 @@
         <div class="hints">
           <div class="hint active">
             Hold <b>BOOT</b> while plugging in your ESP board.<br />
-            Release, then press Start.
+            Release, then press "Install Now".
           </div>
           <div class="hint">Confirm the firmware and start installation.</div>
         </div>
       </div>
       <div class="device"><img src="/img/main.png" alt="" /></div>
+      <footer class="footer-icons">
+        <a href="#build" rel="noopener noreferrer" class="icon-btn icon-cube" aria-label="Build your own ESPTimeCast" >
+          <img src="/img/cube.svg" alt="" aria-hidden="true" />
+        </a>
+
+        <a href="#extension" rel="noopener noreferrer" class="icon-btn icon-puzzle" aria-label="ESPTimeCast Chrome extension" >
+          <img src="/img/extension.svg" alt="" aria-hidden="true" />
+        </a>
+
+        <a href="#manual" rel="noopener noreferrer" class="icon-btn icon-tools" aria-label="Advanced setup and manual installation" >
+          <img src="/img/tools.svg" alt="" aria-hidden="true" />
+        </a>
+
+        <a
+          href="https://www.reddit.com/r/ESPTimeCast/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="icon-btn icon-reddit"
+          aria-label="Join the ESPTimeCast community on Reddit"
+        >
+          <img src="/img/reddit.svg" alt="" aria-hidden="true" />
+        </a>
+
+        <a
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="icon-btn icon-terminal"
+          aria-label="ESPTimeCast device terminal and logs"
+        >
+          <img src="/img/terminal.svg" alt="" aria-hidden="true" />
+        </a>
+        <a
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="icon-btn icon-cog"
+          aria-label="ESPTimeCast web installer settings"
+        >
+          <img src="/img/cog.svg" alt="" aria-hidden="true" />
+        </a>
+        <div class="footer-subtitle" id="footerSubtitle"></div>
+      </footer>
     </div>
-    <footer class="footer-icons">
-      <a
-        href="https://github.com/mfactory-osaka/ESPTimeCast"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="icon-btn icon-github"
-        aria-label="ESPTimeCast on GitHub - firmware, wiring diagrams and documentation"
-      >
-        <img src="/img/github.svg" alt="" aria-hidden="true" />
-      </a>
+    <!-- CONTENT -->
+     <div class="content-wrapper">
+        <div class="content">
+            <div class="content-section in-action">            
+            <h2>ESPTimeCast in action!</h2>
+            <video 
+              autoplay 
+              muted 
+              loop 
+              playsinline 
+              preload="metadata"
+              style="width: 100%; max-width: 720px; border-radius: 12px;">              
+              <source src="img/demo.mp4" type="video/mp4">              
+              Your browser does not support the video tag.
+            </video>
+            <div class="caption">Real-time clock, weather, and live data — all on a single display.</div>
+            <br>
+            <p>
+              Ready to build your own? Download the case and get started in minutes.
+            </p>
+            <div class="quick-build">
+              <a href="#build" class="page-button">
+                View Build Options ↓
+              </a>
+            </div>
+          </div>
 
-      <a
-        href="https://www.reddit.com/r/ESPTimeCast/"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="icon-btn icon-reddit"
-        aria-label="Join the ESPTimeCast community on Reddit"
-      >
-        <img src="/img/reddit.svg" alt="" aria-hidden="true" />
-      </a>
+          <div class="content-section what-is">
+            <h2>What is ESPTimeCast?</h2>
+            <p>
+              ESPTimeCast™ is a sleek, WiFi-connected LED matrix display that brings real-time information to your desk. It combines accurate time, live weather, and custom data into a single, minimalist display — all configurable directly from your browser.<br><br>
+              No Arduino IDE, no apps, no complex setup — just plug it in, connect, and it works.
+            </p>
+            <div class="indent">
+              <h3>Highlights</h3>
+              <ul class="feature-list">
+                <li>🌐 <strong>Accurate Time Sync</strong> — always up-to-date via NTP</li>
+                <li>🌦 <strong>Live Weather Data</strong> — temperature, conditions, and more</li>
+                <li>⚙️ <strong>Browser-Based Setup</strong> — configure everything, no apps required</li>
+                <li>🔄 <strong>OTA Updates</strong> — update firmware wirelessly anytime</li>
+                <li>💬 <strong>Custom Messages & Timers</strong> — display alerts, reminders, or events</li>
+                <li>🧠 <strong>Smart Integrations</strong> — works with Home Assistant & other APIs</li>
+              </ul>
+            </div>
+            <br>
+            <div class="caption">Built for makers, but simple enough for anyone to use.</div>
+          </div>
 
-      <a
-        href="https://github.com/mfactory-osaka/ESPTimeCast#%EF%B8%8F-support-this-project"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="icon-btn icon-support"
-        aria-label="Support the ESPTimeCast project"
-      >
-        <img src="/img/heart.svg" alt="" aria-hidden="true" />
-      </a>
+          <div id="extension" class="content-section extension">
+            <h2>Now Playing — Smart Control</h2>
+            <p>
+              The <strong>ESPTimeCast Companion Extension</strong> automatically detects what you're watching or listening to and displays it on your device in real time.
+            </p>
+            <p>
+              Send messages, start timers, and control your display — all directly from your browser, no Web UI required.
+            </p>
+            <div class="indent">
+              <ul class="feature-list">
+                <li>🎵 Auto-detects music & video titles (YouTube, Spotify, Twitch, and more)</li>
+                <li>⚡ Instantly sends messages and timers from the popup</li>
+                <li>🎛 Control brightness, modes, and rotation remotely</li>
+                <li>📡 Cast to multiple ESPTimeCast devices at once</li>
+                <li>🔒 Runs locally on your network — fast and private</li>
+              </ul>
+            </div>
+            <br>
+            <div class="extension-preview">
+              <img src="img/extension.png" alt="ESPTimeCast Chrome Extension">
+            </div>
+            <div class="quick-build">
+              <a href="https://chromewebstore.google.com/detail/esptimecast-companion/oddacoojadbboefmmebihlengjacbbme"
+                target="_blank"
+                class="page-button">
+                Install Chrome Extension ↗
+              </a>
+            </div>
 
-      <a
-        href="https://www.printables.com/model/1344276-esptimecast-wifi-clock-weather-display"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="icon-btn icon-cube"
-        aria-label="Get the official 3D printable case for ESPTimeCast"
-      >
-        <img src="/img/cube.svg" alt="" aria-hidden="true" />
-      </a>
+            <div class="caption">
+              Works with YouTube, Spotify, Prime Video, Vimeo, Dailymotion, Twitch, and SoundCloud.
+            </div>
+          </div>
 
-      <a
-        href="https://www.instagram.com/mfactory.osaka/"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="icon-btn icon-instagram"
-        aria-label="Follow M-Factory on Instagram"
-      >
-        <img src="/img/instagram.svg" alt="" aria-hidden="true" />
-      </a>
-      <a
-        href="#"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="icon-btn icon-terminal"
-        aria-label="ESPTimeCast device terminal and logs"
-      >
-        <img src="/img/terminal.svg" alt="" aria-hidden="true" />
-      </a>
-      <a
-        href="#"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="icon-btn icon-cog"
-        aria-label="ESPTimeCast web installer settings"
-      >
-        <img src="/img/cog.svg" alt="" aria-hidden="true" />
-      </a>
-      <div class="footer-subtitle" id="footerSubtitle"></div>
-    </footer>
+          <div class="content-section how-it-works">
+            <h2>Get Started in Minutes</h2>
+            <p>From electronic components and 3D-printed parts to a live display — it's fast and straightforward.</p>
+            <div class="indent">
+              <ul class="feature-list">
+                <li><strong>1. Connect: </strong>Plug in your device via USB and open the Web Installer.</li>
+                <li><strong>2. Install: </strong>Flash ESPTimeCast directly from your browser — no software required.</li>
+                <li><strong>3. Configure: </strong>Connect to WiFi, set your preferences, and you're ready to go.</li>
+              </ul>
+            </div>
+            <div class="quick-build">
+              <a href="#top" class="page-button">
+                Install Now ↑
+              </a>
+            </div>
+            <br>
+            <div class="caption">
+              No coding. No complex setup. Just build, flash, and enjoy.
+            </div>
+          </div>
+
+          <div class="content-section" id="manual">
+            <h2>Manual Installation</h2>
+            <p>
+              Prefer a more hands-on approach?
+            </p>
+            <p>
+              You can install ESPTimeCast manually using the Arduino IDE.
+            </p>
+            <p>
+              This method gives you full control over the firmware, board configuration, and advanced features — ideal for custom builds and experienced users.
+            </p>
+            <p>
+              Full step-by-step instructions, wiring, and advanced setup available on GitHub.
+            </p>
+            <br>
+            <div class="quick-build">
+              <a href="https://github.com/mfactory-osaka/ESPTimeCast?tab=readme-ov-file#-advanced-setup--technical-details"
+                target="_blank"
+                class="page-button">
+                Installation Guide ↗
+              </a>
+            </div>
+          </div>
+
+          <div class="content-section">
+            <h2>Features</h2>
+            <p>Everything you need, built right in.</p>
+            <div class="features-grid">
+              <div class="feature">
+                <h3>🌐 Real-Time Clock</h3>
+                <p>Always accurate with automatic NTP synchronization.</p>
+              </div>
+              <div class="feature">
+                <h3>🌦 Weather Updates</h3>
+                <p>Live temperature, conditions, and optional details like humidity.</p>
+              </div>
+              <div class="feature">
+                <h3>⚙️ Easy Web Setup</h3>
+                <p>Configure everything from your browser — no apps or installs.</p>
+              </div>
+              <div class="feature">
+                <h3>🔄 OTA Updates</h3>
+                <p>Update your device wirelessly without reconnecting cables.</p>
+              </div>
+              <div class="feature">
+                <h3>💬 Custom Messages</h3>
+                <p>Send alerts, reminders, or scrolling messages anytime.</p>
+              </div>
+              <div class="feature">
+                <h3>⏱ Timers & Countdowns</h3>
+                <p>Built-in timer system for events, reminders, or daily use.</p>
+              </div>
+              <div class="feature">
+                <h3>🧠 Smart Integrations</h3>
+                <p>Works with Home Assistant and custom API endpoints.</p>
+              </div>
+              <div class="feature">
+                <h3>🌙 Auto Dimming</h3>
+                <p>Adjust brightness automatically based on time or schedule.</p>
+              </div>
+            </div>
+            <br><br>
+            <div class="caption">And much more — explore advanced features and customization once your device is up and running.</div>
+          </div>
+
+          <div class="content-section">
+            <h2>Supported Hardware</h2>
+            <p>
+              ESPTimeCast supports popular ESP8266 and ESP32-based development boards.
+              The Web Installer automatically detects and configures compatible devices.
+            </p>
+            <div class="indent">
+              <div class="hardware-block">
+                <h3>Compatible Chip Families</h3>
+                <ul>
+                  <li>ESP8266</li>
+                  <li>ESP32</li>
+                  <li>ESP32-S2</li>
+                  <li>ESP32-C3</li>
+                  <li>ESP32-S3</li>
+                </ul>
+              </div>
+
+              <div class="hardware-block">
+                <h3>✅ Officially Tested Boards</h3>
+                <ul>
+                  <li>Wemos D1 Mini (ESP8266)</li>
+                  <li>ESP32 Dev Module</li>
+                  <li>ESP32-C3 SuperMini</li>
+                  <li>Wemos S2 Mini (ESP32-S2)</li>
+                  <li>ESP32-S3 WROOM-1</li>
+                </ul>
+              </div>
+            </div>
+            <p>Other boards using these chip families may also work, depending on pin layout and USB configuration.</p>
+            <div class="caption">Looking for wiring details, pin mappings, or manual installation?<br>
+              <a href="https://github.com/mfactory-osaka/ESPTimeCast" target="_blank">
+              View full documentation on GitHub ↗
+              </a>
+            </div>
+          </div>
+
+          <div id="build" class="content-section">
+            <h2>Build Your Own ESPTimeCast</h2>
+            <p class="subtitle">
+              Join 1,300+ makers building their own ESPTimeCast worldwide.
+            </p>
+
+            <div class="carousel" id="buildCarousel">
+              <div class="carousel-track">
+
+                <img src="img/builds/1.png" alt="ESPTimeCast build">
+                <img src="img/builds/2.png" alt="ESPTimeCast build">
+                <img src="img/builds/3.png" alt="ESPTimeCast build">
+                <img src="img/builds/4.png" alt="ESPTimeCast build">
+                <img src="img/builds/5.png" alt="ESPTimeCast build">
+                <img src="img/builds/6.png" alt="ESPTimeCast build">
+                <img src="img/builds/7.png" alt="ESPTimeCast build">
+                <img src="img/builds/8.png" alt="ESPTimeCast build">
+                <img src="img/builds/9.png" alt="ESPTimeCast build">
+                <img src="img/builds/10.png" alt="ESPTimeCast build">
+                <img src="img/builds/11.png" alt="ESPTimeCast build">
+                <img src="img/builds/12.png" alt="ESPTimeCast build">
+
+                <!-- duplicate for seamless loop -->
+                <img src="img/builds/1.png" alt="">
+                <img src="img/builds/2.png" alt="">
+                <img src="img/builds/3.png" alt="">
+                <img src="img/builds/4.png" alt="">
+
+              </div>
+            </div>
+
+            <section class="case-showcase">
+              <h3>Choose Your Style</h3>
+              <div class="case-grid">
+                <div class="case-card">
+                  <img src="img/v1.png" alt="ESPTimeCast Retro Case">
+                  <div class="caption"><strong>Retro:</strong> Classic design inspired by vintage displays.</div>
+                </div>
+                <div class="case-card">
+                  <img src="img/v2.png" alt="ESPTimeCast Stylish Case">
+                  <div class="caption"><strong>Stylish:</strong> Clean, modern look for any setup.</div>
+                </div>
+              </div>
+            </section>
+            <br>
+
+            <p class="case-text">
+              Build your own ESPTimeCast with the official case — includes both <strong>Retro</strong> and <strong>Stylish</strong> designs, ready to download and 3D print.
+            </p>
+            <div class="quick-build">
+              <a class="page-button" href="https://www.printables.com/model/1344276-esptimecast-wi-fi-clock-weather-display"
+                target="_blank"
+                class="button-primary">
+                Download on Printables ↗
+              </a>
+              <a class="page-button" href="https://cults3d.com/en/3d-model/gadget/wifi-connected-led-matrix-clock-and-weather-station-esp8266-and-max7219"
+                target="_blank"
+                class="button-secondary">
+                Download on Cults3D ↗
+              </a>
+            </div>
+            </div>
+            <div class="support">
+              <p class="caption">
+                Enjoying ESPTimeCast? You can support the project by downloading the case,<br>
+                starring the repo, or contributing directly:
+                <a href="https://github.com/mfactory-osaka/ESPTimeCast"
+                  target="_blank">
+                  ⭐ Star on GitHub ↗
+                </a>
+                &nbsp;&nbsp;
+                <a href="https://github.com/mfactory-osaka/ESPTimeCast#%EF%B8%8F-support-this-project"
+                  target="_blank">
+                  ❤️ Support the Project ↗
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+     </div>
+
+    <!-- MODAL -->
     <div id="settings-modal" class="modal">
       <div class="modal-content">
         <h2>Installer Settings</h2>
@@ -1367,6 +1830,7 @@
         </div>
       </div>
     </div>
+
     <!-- TERMINAL MODAL -->
     <div id="terminalModal" class="modal">
       <div class="terminal-backdrop"></div>
@@ -1397,11 +1861,26 @@
           </div>
         </div>
         <div id="terminalToast" class="terminal-toast"></div>
-
       </div>
     </div>
     </div>
+    <script>
+    const carousel = document.getElementById("buildCarousel");
+    const track = carousel.querySelector(".carousel-track");
 
+    carousel.addEventListener("mouseenter", () => {
+      track.style.animationPlayState = "paused";
+    });
+
+    carousel.addEventListener("mouseleave", () => {
+      track.style.animationPlayState = "running";
+    });
+
+    // also pause on touch (mobile)
+    carousel.addEventListener("touchstart", () => {
+      track.style.animationPlayState = "paused";
+    });
+    </script>
     <script type="module" src="esptimecast.js?v=1.4.2"></script>
   </body>
 </html>
