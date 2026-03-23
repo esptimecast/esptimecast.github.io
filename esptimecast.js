@@ -80,7 +80,7 @@ const READ_REG_PACKET = slipEncode([0x00, 0x0a, 0x04, 0x00, 0x00, 0x00, 0x00, 0x
 
 const manifest = {
     name: "ESPTimeCast",
-    version: "1.4.2",
+    version: "1.5.0",
     builds: []
 };
 
