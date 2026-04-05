@@ -80,7 +80,7 @@ const READ_REG_PACKET = slipEncode([0x00, 0x0a, 0x04, 0x00, 0x00, 0x00, 0x00, 0x
 
 const manifest = {
     name: "ESPTimeCast",
-    version: "1.5.0",
+    version: "1.5.1",
     builds: []
 };
 
@@ -90,27 +90,44 @@ manifest.builds = [
     {
         chipFamily: "ESP8266",
         factory: basePath + "esp8266.bin",
-        update: basePath + "esp8266.bin"
+        update: basePath + "esp8266.bin",
+        boards: null
     },
     {
         chipFamily: "ESP32",
         factory: basePath + "esp32_full.bin",
-        update: basePath + "esp32_app.bin"
+        update: basePath + "esp32_app.bin",
+        boards: [
+            { label: "ESP32 Dev Module / D1 Mini ESP32", pins: { clk: 18, cs: 23, data: 5 } },
+            { label: "Custom", pins: null }
+        ]
     },
     {
         chipFamily: "ESP32-C3",
         factory: basePath + "esp32c3_full.bin",
-        update: basePath + "esp32c3_app.bin"
+        update: basePath + "esp32c3_app.bin",
+        boards: [
+            { label: "SuperMini C3", pins: { clk: 4, cs: 10, data: 6 } },
+            { label: "Custom", pins: null }
+        ]
     },
     {
         chipFamily: "ESP32-S2",
         factory: basePath + "esp32s2_full.bin",
-        update: basePath + "esp32s2_app.bin"
+        update: basePath + "esp32s2_app.bin",
+        boards: [
+            { label: "S2 Mini", pins: { clk: 7, cs: 11, data: 12 } },
+            { label: "Custom", pins: null }
+        ]
     },
     {
         chipFamily: "ESP32-S3",
         factory: basePath + "esp32s3_full.bin",
-        update: basePath + "esp32s3_app.bin"
+        update: basePath + "esp32s3_app.bin",
+        boards: [
+            { label: "ESP32-S3 WROOM-1", pins: { clk: 18, cs: 16, data: 17 } },
+            { label: "Custom", pins: null }
+        ]
     }
 ];
 
@@ -126,10 +143,21 @@ if (navigator.serial) {
     });
 }
 
+function uint8ToBinaryString(uint8) {
+    let result = "";
+    const chunkSize = 0x8000; // prevents stack overflow
+
+    for (let i = 0; i < uint8.length; i += chunkSize) {
+        result += String.fromCharCode(...uint8.subarray(i, i + chunkSize));
+    }
+
+    return result;
+}
+
 /* ============================================================
    SECTION 5: INSTALL CONFIRMATION UI
    ============================================================ */
-async function flashFirmwareWithRetry(port, chip, firmwarePath, maxRetries = 3) {
+async function flashFirmwareWithRetry(port, chip, firmwarePath, pinoutData = null, maxRetries = 3) {
     let currentPort = port;
     slideFlashing();
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -137,7 +165,7 @@ async function flashFirmwareWithRetry(port, chip, firmwarePath, maxRetries = 3) 
 
         try {
             log(`Flash attempt ${attempt} of ${maxRetries}...`);
-            await flashFirmware(currentPort, chip, firmwarePath);
+            await flashFirmware(currentPort, chip, firmwarePath, pinoutData);
             log("✅ Flash succeeded!");
             return;
         } catch (err) {
@@ -174,13 +202,33 @@ async function flashFirmwareWithRetry(port, chip, firmwarePath, maxRetries = 3) 
 }
 
 async function showInstallPrompt(port, chip, build, version) {
-
     document.getElementById("confirm-chip").innerHTML =
-        `<strong>${chip}</strong> detected`;
+        `<strong>${chip}</strong> chip detected`;
 
     currentInstallContext = { build, version };
-
     updateConfirmText(false);
+
+    // Board selector for ESP32 family
+    const boardSelectorEl = document.getElementById("board-selector");
+    if (build.boards && boardSelectorEl) {
+        const selectEl = document.getElementById("board-select");
+        selectEl.innerHTML = build.boards.map((b, i) =>
+            `<option value="${i}">${b.label}</option>`
+        ).join("");
+        updateBoardSelector();
+
+        // Show/hide custom pins on change
+        selectEl.addEventListener("change", (e) => {
+            const selected = build.boards[e.target.value];
+            const customDiv = document.getElementById("custom-pins");
+            if (customDiv) customDiv.style.display = selected.pins === null ? "flex" : "none";
+        });
+
+        boardSelectorEl.style.display = "flex";
+    } else if (boardSelectorEl) {
+        boardSelectorEl.style.display = "none";
+    }
+
     goToSlide("confirm");
     showHint(1);
 
@@ -192,18 +240,43 @@ async function showInstallPrompt(port, chip, build, version) {
 
     document.getElementById("confirm-install").onclick = async () => {
         hideHints();
-
         const keepData = shouldKeepData();
         const selectedFirmware = keepData ? build.update : build.factory;
 
-        await flashFirmwareWithRetry(port, chip, "bins/" + selectedFirmware);
+        let pinoutData = null;
+
+        if (!keepData && build.boards) {
+            const selectEl = document.getElementById("board-select");
+            const selected = build.boards[selectEl?.value ?? 0];
+
+            if (selected.pins === null) {
+                const clk = parseInt(document.getElementById("pin-clk").value);
+                const cs = parseInt(document.getElementById("pin-cs").value);
+                const data = parseInt(document.getElementById("pin-data").value);
+
+                if ([clk, cs, data].some(v => isNaN(v))) {
+                    log(`❌ Invalid pins for ${chip}`);
+                    return;
+                }
+                if (new Set([clk, cs, data]).size !== 3) {
+                    log("❌ CLK, CS and DATA pins must all be different");
+                    return;
+                }
+
+                pinoutData = generateNVSPartition("pins", { clk, cs, data });
+            } else {
+                const { clk, cs, data } = selected.pins;
+                pinoutData = generateNVSPartition("pins", { clk, cs, data });
+            }
+        }
+
+        await flashFirmwareWithRetry(port, chip, "bins/" + selectedFirmware, pinoutData, 3);
     };
 }
 
 /* ============================================================
    SECTION 6: MAIN DETECTION FLOW
    ============================================================ */
-
 document.getElementById("start").onclick = async () => {
 
     hideHints();
@@ -281,9 +354,57 @@ async function runFlasher() {
 
             return; // S2 fully handled
         }
+if (chipByPID === "NATIVE_CDC") {
+    log("Native USB CDC device detected (ESP32-C3 or ESP32-S3).");
+    log("Using USB reset mode — no boot button needed.");
 
-        // If PID detected C3, treat it as non-S2: open port and continue to magic detection
-        if (chipByPID === "ESP32-C3") log("ESP32-C3 detected via USB PID — continuing with flash detection");
+    // Don't do manual UART probe — let ESPLoader handle it
+    await ensureMinDetectTime();
+
+    // Use ESPLoader to connect and identify the chip
+    let detectedChip = null;
+    const transport = new Transport(port, false);
+    try {
+        const loader = new ESPLoader({
+            transport,
+            baudrate: 460800,
+            terminal: {
+                clean: () => {},
+                writeLine: (msg) => log(msg),
+                write: (msg) => log(msg),
+            }
+        });
+
+        await loader.main("usb_reset");  // ← triggers bootloader via CDC, no button needed
+        detectedChip = loader.chip.CHIP_NAME; // "ESP32-S3" or "ESP32-C3"
+        log(`Identified via USB reset: ${detectedChip}`);
+
+        // Disconnect cleanly so flashFirmware can reconnect
+        await finalizeConnection({ port, transport });
+
+    } catch (e) {
+        log(`⚠️ USB reset identify failed: ${e.message}`);
+        await finalizeConnection({ port, transport });
+        slideError();
+        return;
+    }
+
+    // Map chip name to result
+    if (detectedChip?.includes("S3")) result = "ESP32-S3";
+    else if (detectedChip?.includes("C3")) result = "ESP32-C3";
+    else {
+        slideUnknownESP();
+        return;
+    }
+
+    reportDetectedChip(result);
+
+    const build = manifest.builds.find(b => b.chipFamily === result);
+    if (!build) { slideUnsupportedBoard(result); return; }
+
+    await showInstallPrompt(port, result, build, manifest.version);
+    return;
+}
 
         // --- only open port for non-S2 chips ---
         await port.open({ baudRate: 115200 });
@@ -396,7 +517,6 @@ async function runFlasher() {
         try { reader?.releaseLock(); } catch { }
     }
 }
-
 /* ============================================================
    SECTION 7: FLASHING
    ============================================================ */
@@ -410,7 +530,7 @@ function handleFlashStageMessage(msg) {
     }
 }
 
-async function flashFirmware(port, chip, firmwarePath) {
+async function flashFirmware(port, chip, firmwarePath, pinoutData = null) {
     log("Starting flash using esptool-js...");
     const initStart = Date.now();
     if (chip === "ESP32-S2") {
@@ -418,6 +538,7 @@ async function flashFirmware(port, chip, firmwarePath) {
     }
     let transport = null;
     try {
+        let nvsBinary = null;
         // Create transport with S2-specific settings
         const isNativeUSB = chip === "ESP32-S2" ||
             (chip === "ESP32-S3" && port.getInfo().usbVendorId === 0x303a) ||
@@ -443,11 +564,7 @@ async function flashFirmware(port, chip, firmwarePath) {
                 clean: () => { },
                 writeLine: (msg) => {
                     log(msg);
-                    const percent = parseFlashProgress(msg);
-                    if (percent !== null) {
-                        updateProgressRing(percent);
-                    }
-                    handleFlashStageMessage(msg);
+                    handleFlashStageMessage(msg); // keep this
                 },
                 write: (msg) => {
                     log(msg);
@@ -471,11 +588,7 @@ async function flashFirmware(port, chip, firmwarePath) {
         //setFlashingTitle("Flashing firmware...");
         switchToProgressRing();
         const uint8 = new Uint8Array(contents);
-        let binaryString = "";
-        const CHUNK_SIZE = 8192;
-        for (let i = 0; i < uint8.length; i += CHUNK_SIZE) {
-            binaryString += String.fromCharCode.apply(null, uint8.subarray(i, i + CHUNK_SIZE));
-        }
+        const binaryData = new Uint8Array(contents);
         const keepData = shouldKeepData();
         const flashAddress = (keepData && chip.startsWith("ESP32")) ? 0x10000 : 0x0000;
         log("==================================================");
@@ -487,18 +600,56 @@ async function flashFirmware(port, chip, firmwarePath) {
         log(`Flash Address: 0x${flashAddress.toString(16).toUpperCase()}`);
         log(`Erase All Before Flash: ${!keepData}`);
         log("==================================================");
-        const fileArray = [{ data: binaryString, address: flashAddress }];
+
+        // Prepare file array — firmware first, NVS second (NVS wins over merged bin)
+        const fileArray = [];
+
+        fileArray.push({
+            data: uint8ToBinaryString(binaryData),
+            address: flashAddress,
+            size: binaryData.length
+        });
+        log(`Queued Firmware @ 0x${flashAddress.toString(16).toUpperCase()}`);
+
+        if (pinoutData && chip !== "ESP8266") {
+            nvsBinary = pinoutData;
+            fileArray.push({
+                data: uint8ToBinaryString(nvsBinary),
+                address: 0x9000,
+                size: nvsBinary.length
+            });
+            log(`Queued NVS @ 0x9000 (${nvsBinary.length} bytes)`);
+        }
+
+        log(`FLASHING: ${!keepData ? "Full Erase + Write" : "Update Mode (preserve data)"}`);
+
         await loader.writeFlash({
             fileArray,
             flashSize: "keep",
             eraseAll: !keepData,
             compress: true,
-            reportProgress: (fraction) => {
-                const percent = Math.round(fraction * 100);
-                if (percent > 0) updateProgressRing(percent);
+            reportProgress: (fileIndex, written, total) => {
+                let overallProgress = 0;
+
+                for (let i = 0; i < fileArray.length; i++) {
+                    if (i < fileIndex) {
+                        // fully completed files
+                        overallProgress += fileArray[i].size;
+                    } else if (i === fileIndex) {
+                        // current file progress (normalized)
+                        const fraction = written / total;
+                        overallProgress += fileArray[i].size * fraction;
+                    }
+                }
+
+                const overallTotal = fileArray.reduce((sum, f) => sum + f.size, 0);
+
+                const percent = Math.floor((overallProgress / overallTotal) * 100);
+
+                updateProgressRing(Math.min(percent, 99)); // prevent early 100%
             }
-        }
-        );
+        });
+
         // Flash finished
         const finalizeStart = Date.now();
         setFlashingTitle("Finalizing...");
@@ -646,10 +797,10 @@ function installSuccess(isUart = true) {
     currentInstallContext = null;
 
     const message = isUart
-    ? "<b>ESPTimeCast</b> is now running.<br>Enjoying the project? Consider supporting it."
-    : "Press <b>RESET</b> or reconnect to start <b>ESPTimeCast</b>.<br>Enjoying the project? Consider supporting it.";
+        ? "<b>ESPTimeCast</b> is now running.<br>Enjoying the project? Consider supporting it."
+        : "Press <b>RESET</b> or reconnect to start <b>ESPTimeCast</b>.<br>Enjoying the project? Consider supporting it.";
 
-document.getElementById("success-message").innerHTML = message;
+    document.getElementById("success-message").innerHTML = message;
 
     document.getElementById("success-message").innerHTML = message;
 
@@ -1001,10 +1152,8 @@ function updateConfirmText(animate = true) {
     const keepData = shouldKeepData();
 
     const newHTML = keepData
-        ? `Updating to <strong>v${version}</strong><br>
-           Your settings and Wi-Fi configuration will be preserved.`
-        : `Installing <strong>v${version}</strong> will erase all settings and data.<br>
-           This action cannot be undone.`;
+        ? `Updating to <strong>v${version}</strong> - your settings will be preserved.`
+        : `Installing <strong>v${version}</strong> will erase all your settings and data.`;
 
     if (!animate) {
         // Instant update (no fade)
@@ -1040,6 +1189,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load saved setting
     eraseAllCheckbox.checked =
         localStorage.getItem('keepData') !== 'true';
+    updateBoardSelector();
 
     // Open modal
     cogIcon.addEventListener('click', (e) => {
@@ -1052,6 +1202,7 @@ document.addEventListener("DOMContentLoaded", () => {
     eraseAllCheckbox.addEventListener("change", () => {
         localStorage.setItem('keepData', !eraseAllCheckbox.checked);
         updateConfirmText();
+        updateBoardSelector();
     });
 
     // Click outside closes modal
@@ -1391,4 +1542,151 @@ function bindTerminalFooterEvents() {
             a.click();
             URL.revokeObjectURL(url);
         });
+}
+
+function generateNVSPartition(namespace, entries) {
+    const PARTITION_SIZE = 0x5000;
+    const partition = new Uint8Array(PARTITION_SIZE).fill(0xFF);
+
+    const crc32Table = (() => {
+        const t = new Uint32Array(256);
+        for (let i = 0; i < 256; i++) {
+            let c = i;
+            for (let j = 0; j < 8; j++) {
+                c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+            }
+            t[i] = c >>> 0;
+        }
+        return t;
+    })();
+
+    function crc32(bytes) {
+        let crc = 0x00000000;
+        for (const b of bytes) {
+            crc = (crc32Table[(crc ^ b) & 0xFF] ^ (crc >>> 8)) >>> 0;
+        }
+        return (crc ^ 0xFFFFFFFF) >>> 0;
+    }
+
+    // --- PAGE HEADER ---
+    const header = new DataView(partition.buffer, 0, 32);
+    header.setUint32(0, 0xFFFFFFFE, true); // ACTIVE
+    header.setUint32(4, 0, true);          // sequence number
+    header.setUint8(8, 0xFE);            // version (safer)
+
+    const headerCrc = crc32(new Uint8Array(partition.buffer, 4, 24));
+    header.setUint32(28, headerCrc, true);
+
+    let entryIdx = 0;
+
+    // Correct bitmap handling (2 bits per entry) ---
+    function markWritten(idx) {
+        const byteIndex = 32 + Math.floor(idx / 4);
+        const bitOffset = (idx % 4) * 2;
+
+        partition[byteIndex] &= ~(0b11 << bitOffset);
+        partition[byteIndex] |= (0b10 << bitOffset);
+    }
+
+    function writeEntry(nsIdx, type, key, valueBytes) {
+        const offset = 64 + entryIdx * 32;
+        const entry = new Uint8Array(partition.buffer, offset, 32);
+        entry.fill(0xFF);
+
+        entry[0] = nsIdx;
+        entry[1] = type;
+        entry[2] = 1;    // span
+        entry[3] = 0xFF; // chunk index
+
+        const keyBytes = new TextEncoder().encode(key);
+        const writeLen = Math.min(keyBytes.length, 15);
+
+        for (let i = 0; i < writeLen; i++) {
+            entry[8 + i] = keyBytes[i];
+        }
+
+        entry[8 + writeLen] = 0x00;
+
+        // Zero padding after null terminator
+        for (let i = 8 + writeLen + 1; i < 24; i++) {
+            entry[i] = 0x00;
+        }
+        // }
+
+        // value (bytes 24–31)
+        if (valueBytes) {
+            entry.set(valueBytes, 24);
+        }
+        // CRC (exclude bytes 4–7)
+        const crcBuf = new Uint8Array(28);
+        crcBuf.set(entry.slice(0, 4), 0);
+        crcBuf.set(entry.slice(8, 32), 4);
+        const crc = crc32(crcBuf);
+
+        new DataView(entry.buffer, entry.byteOffset + 4, 4)
+            .setUint32(0, crc, true);
+
+        markWritten(entryIdx++);
+    }
+
+    // Namespace entry
+    const nsValue = new Uint8Array(8).fill(0xFF);
+    nsValue[0] = 1;
+
+    writeEntry(0, 0x01, namespace, nsValue); // type = NAMESPACE
+
+    // Data entries (I32)
+    for (const [key, value] of Object.entries(entries)) {
+        const data = new Uint8Array(8).fill(0xFF);
+        const val = parseInt(value) || 0;
+
+        // Shift bits to the right and mask them to get each byte
+        data[0] = val & 0xFF;         // Lowest byte (e.g., 10 -> 0x0A)
+        data[1] = (val >> 8) & 0xFF;  // Second byte
+        data[2] = (val >> 16) & 0xFF; // Third byte
+        data[3] = (val >> 24) & 0xFF; // Highest byte
+
+        // 0x14 is the magic hex code for NVS_TYPE_I32 
+        writeEntry(1, 0x14, key, data);
+    }
+
+    return partition;
+}
+
+// Function to handle the Board Selector logic based on Keep Data state
+function updateBoardSelector() {
+    const boardSelect = document.getElementById("board-select");
+    if (!boardSelect) return;
+
+    const customOption = boardSelect.querySelector('option:last-child');
+
+    // localStorage.getItem('keepData') === 'true' means they want to KEEP data
+    const eraseAllCheckbox = document.getElementById('erase-all-data');
+    if (!eraseAllCheckbox) return;
+
+    const isKeepingData = !eraseAllCheckbox.checked;
+
+    if (isKeepingData) {
+        // 1. Hide the Custom option (usually the last one)
+        if (customOption) {
+            customOption.style.display = "none";
+            customOption.disabled = true;
+        }
+
+        // 2. If "Custom" was currently selected, reset to the first board
+const selected = currentInstallContext?.build?.boards?.[boardSelect.value];
+
+if (isKeepingData && selected?.pins === null) {
+    boardSelect.selectedIndex = 0;
+
+    // Trigger UI update (pins panel etc.)
+    boardSelect.dispatchEvent(new Event('change'));
+}
+    } else {
+        // Show the Custom option again if they decide to Erase All
+        if (customOption) {
+            customOption.style.display = "block";
+            customOption.disabled = false;
+        }
+    }
 }

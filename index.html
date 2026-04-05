@@ -1271,6 +1271,38 @@
           margin-top: 2rem;
           gap: 1.5rem;
         }
+
+        #board-selector {
+          display: flex;
+          gap: 0.5rem;
+          align-items: center;
+          margin-top: 1rem;
+        }
+
+        #board-select, #custom-pins input{
+          background: transparent;
+          color: white;
+          padding: 0.3rem;
+          border-radius: 0.4rem;
+          border: 1px solid rgb(255 255 255 / 20%);
+        }
+      
+        #custom-pins{
+          gap: 0.5rem;
+        } 
+
+        #custom-pins input::placeholder{
+          color: white;
+        } 
+
+        #custom-pins input{
+          min-width: 6ch;
+          text-align: center;
+        }
+
+      #board-select:has(option:last-child:checked) {
+        max-width: 12ch;
+        } 
     </style>
   </head>
 
@@ -1300,7 +1332,7 @@
           </section>
 
           <!-- SLIDE: CONFIRM INSTALL -->
-          <section class="slide" data-slide="confirm">
+          <!-- <section class="slide" data-slide="confirm">
             <div class="icon">
               <img src="/img/esp.png" alt="" />
             </div>
@@ -1312,7 +1344,33 @@
                 Install firmware
               </button>
             </div>
-          </section>
+          </section> -->
+
+          <!-- SLIDE: CONFIRM INSTALL -->
+<section class="slide" data-slide="confirm">
+    <div class="icon">
+        <img src="/img/esp.png" alt="" />
+    </div>
+    <h2 id="confirm-chip"></h2>
+        <!-- Board selector (hidden by default, shown for ESP32 family) -->
+    <div id="board-selector" style="display:none">
+        <label>Board:</label>
+        <select id="board-select"></select>
+        <div id="custom-pins" style="display:none">
+            <input type="number" id="pin-clk"  min="0" max="50" placeholder="CLK">
+            <input type="number" id="pin-cs"   min="0" max="50" placeholder="CS">
+            <input type="number" id="pin-data" min="0" max="50" placeholder="DIN">
+        </div>
+    </div>
+    <p id="confirm-version"></p>
+
+    <div class="actions">
+        <button id="confirm-cancel">Cancel</button>
+        <button id="confirm-install" class="primary">
+            Install firmware
+        </button>
+    </div>
+</section>
 
           <!-- SLIDE: FLASHING -->
           <section class="slide" data-slide="flashing">
