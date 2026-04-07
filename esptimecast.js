@@ -80,7 +80,7 @@ const READ_REG_PACKET = slipEncode([0x00, 0x0a, 0x04, 0x00, 0x00, 0x00, 0x00, 0x
 
 const manifest = {
     name: "ESPTimeCast",
-    version: "1.5.1",
+    version: "1.5.2",
     builds: []
 };
 
@@ -91,7 +91,11 @@ manifest.builds = [
         chipFamily: "ESP8266",
         factory: basePath + "esp8266.bin",
         update: basePath + "esp8266.bin",
-        boards: null
+        boards: [
+            { label: "Wemos D1 Mini", pins: { clk: 14, cs: 13, data: 15 } },
+            { label: "ESP-12F", pins: { clk: 14, cs: 13, data: 12 } },
+            { label: "Custom", pins: null }
+        ]
     },
     {
         chipFamily: "ESP32",
@@ -126,6 +130,7 @@ manifest.builds = [
         update: basePath + "esp32s3_app.bin",
         boards: [
             { label: "ESP32-S3 WROOM-1", pins: { clk: 18, cs: 16, data: 17 } },
+            { label: "ESP32-S3-Zero", pins: { clk: 12, cs: 11, data: 10 } },
             { label: "Custom", pins: null }
         ]
     }
@@ -248,25 +253,24 @@ async function showInstallPrompt(port, chip, build, version) {
         if (!keepData && build.boards) {
             const selectEl = document.getElementById("board-select");
             const selected = build.boards[selectEl?.value ?? 0];
+            let pins;
 
             if (selected.pins === null) {
                 const clk = parseInt(document.getElementById("pin-clk").value);
                 const cs = parseInt(document.getElementById("pin-cs").value);
                 const data = parseInt(document.getElementById("pin-data").value);
 
-                if ([clk, cs, data].some(v => isNaN(v))) {
-                    log(`❌ Invalid pins for ${chip}`);
-                    return;
-                }
-                if (new Set([clk, cs, data]).size !== 3) {
-                    log("❌ CLK, CS and DATA pins must all be different");
-                    return;
-                }
-
-                pinoutData = generateNVSPartition("pins", { clk, cs, data });
+                if ([clk, cs, data].some(v => isNaN(v))) { log(`❌ Invalid pins`); return; }
+                if (new Set([clk, cs, data]).size !== 3) { log("❌ Pins must all be different"); return; }
+                pins = { clk, cs, data };
             } else {
-                const { clk, cs, data } = selected.pins;
-                pinoutData = generateNVSPartition("pins", { clk, cs, data });
+                pins = selected.pins;
+            }
+
+            if (chip === "ESP8266") {
+                pinoutData = generateEEPROMPayload({ magic: 0xAB, ...pins });
+            } else {
+                pinoutData = generateNVSPartition("pins", pins);
             }
         }
 
@@ -354,57 +358,57 @@ async function runFlasher() {
 
             return; // S2 fully handled
         }
-if (chipByPID === "NATIVE_CDC") {
-    log("Native USB CDC device detected (ESP32-C3 or ESP32-S3).");
-    log("Using USB reset mode — no boot button needed.");
+        if (chipByPID === "NATIVE_CDC") {
+            log("Native USB CDC device detected (ESP32-C3 or ESP32-S3).");
+            log("Using USB reset mode — no boot button needed.");
 
-    // Don't do manual UART probe — let ESPLoader handle it
-    await ensureMinDetectTime();
+            // Don't do manual UART probe — let ESPLoader handle it
+            await ensureMinDetectTime();
 
-    // Use ESPLoader to connect and identify the chip
-    let detectedChip = null;
-    const transport = new Transport(port, false);
-    try {
-        const loader = new ESPLoader({
-            transport,
-            baudrate: 460800,
-            terminal: {
-                clean: () => {},
-                writeLine: (msg) => log(msg),
-                write: (msg) => log(msg),
+            // Use ESPLoader to connect and identify the chip
+            let detectedChip = null;
+            const transport = new Transport(port, false);
+            try {
+                const loader = new ESPLoader({
+                    transport,
+                    baudrate: 460800,
+                    terminal: {
+                        clean: () => { },
+                        writeLine: (msg) => log(msg),
+                        write: (msg) => log(msg),
+                    }
+                });
+
+                await loader.main("usb_reset");  // ← triggers bootloader via CDC, no button needed
+                detectedChip = loader.chip.CHIP_NAME; // "ESP32-S3" or "ESP32-C3"
+                log(`Identified via USB reset: ${detectedChip}`);
+
+                // Disconnect cleanly so flashFirmware can reconnect
+                await finalizeConnection({ port, transport });
+
+            } catch (e) {
+                log(`⚠️ USB reset identify failed: ${e.message}`);
+                await finalizeConnection({ port, transport });
+                slideError();
+                return;
             }
-        });
 
-        await loader.main("usb_reset");  // ← triggers bootloader via CDC, no button needed
-        detectedChip = loader.chip.CHIP_NAME; // "ESP32-S3" or "ESP32-C3"
-        log(`Identified via USB reset: ${detectedChip}`);
+            // Map chip name to result
+            if (detectedChip?.includes("S3")) result = "ESP32-S3";
+            else if (detectedChip?.includes("C3")) result = "ESP32-C3";
+            else {
+                slideUnknownESP();
+                return;
+            }
 
-        // Disconnect cleanly so flashFirmware can reconnect
-        await finalizeConnection({ port, transport });
+            reportDetectedChip(result);
 
-    } catch (e) {
-        log(`⚠️ USB reset identify failed: ${e.message}`);
-        await finalizeConnection({ port, transport });
-        slideError();
-        return;
-    }
+            const build = manifest.builds.find(b => b.chipFamily === result);
+            if (!build) { slideUnsupportedBoard(result); return; }
 
-    // Map chip name to result
-    if (detectedChip?.includes("S3")) result = "ESP32-S3";
-    else if (detectedChip?.includes("C3")) result = "ESP32-C3";
-    else {
-        slideUnknownESP();
-        return;
-    }
-
-    reportDetectedChip(result);
-
-    const build = manifest.builds.find(b => b.chipFamily === result);
-    if (!build) { slideUnsupportedBoard(result); return; }
-
-    await showInstallPrompt(port, result, build, manifest.version);
-    return;
-}
+            await showInstallPrompt(port, result, build, manifest.version);
+            return;
+        }
 
         // --- only open port for non-S2 chips ---
         await port.open({ baudRate: 115200 });
@@ -611,14 +615,15 @@ async function flashFirmware(port, chip, firmwarePath, pinoutData = null) {
         });
         log(`Queued Firmware @ 0x${flashAddress.toString(16).toUpperCase()}`);
 
-        if (pinoutData && chip !== "ESP8266") {
-            nvsBinary = pinoutData;
+        if (pinoutData) {
+            const writeAddress = chip === "ESP8266" ? 0x3FB000 : 0x9000; // 0x3FB000 = sector 1019 * 0x1000
+
             fileArray.push({
-                data: uint8ToBinaryString(nvsBinary),
-                address: 0x9000,
-                size: nvsBinary.length
+                data: uint8ToBinaryString(pinoutData),
+                address: writeAddress,
+                size: pinoutData.length
             });
-            log(`Queued NVS @ 0x9000 (${nvsBinary.length} bytes)`);
+            log(`Queued ${chip === "ESP8266" ? "EEPROM" : "NVS"} @ 0x${writeAddress.toString(16).toUpperCase()}`);
         }
 
         log(`FLASHING: ${!keepData ? "Full Erase + Write" : "Update Mode (preserve data)"}`);
@@ -1544,6 +1549,18 @@ function bindTerminalFooterEvents() {
         });
 }
 
+function generateEEPROMPayload({ magic, clk, cs, data }) {
+    // Must match the C++ struct layout exactly:
+    // struct PinConfig { uint8_t magic; uint8_t clk; uint8_t cs; uint8_t data; }
+    const SECTOR_SIZE = 0x1000; // 4KB — EEPROM uses a full flash sector
+    const payload = new Uint8Array(SECTOR_SIZE).fill(0xFF);
+    payload[0] = magic; // 0xAB
+    payload[1] = clk;
+    payload[2] = cs;
+    payload[3] = data;
+    return payload;
+}
+
 function generateNVSPartition(namespace, entries) {
     const PARTITION_SIZE = 0x5000;
     const partition = new Uint8Array(PARTITION_SIZE).fill(0xFF);
@@ -1674,14 +1691,14 @@ function updateBoardSelector() {
         }
 
         // 2. If "Custom" was currently selected, reset to the first board
-const selected = currentInstallContext?.build?.boards?.[boardSelect.value];
+        const selected = currentInstallContext?.build?.boards?.[boardSelect.value];
 
-if (isKeepingData && selected?.pins === null) {
-    boardSelect.selectedIndex = 0;
+        if (isKeepingData && selected?.pins === null) {
+            boardSelect.selectedIndex = 0;
 
-    // Trigger UI update (pins panel etc.)
-    boardSelect.dispatchEvent(new Event('change'));
-}
+            // Trigger UI update (pins panel etc.)
+            boardSelect.dispatchEvent(new Event('change'));
+        }
     } else {
         // Show the Custom option again if they decide to Erase All
         if (customOption) {
