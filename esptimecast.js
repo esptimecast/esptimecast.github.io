@@ -121,6 +121,7 @@ manifest.builds = [
         update: basePath + "esp32s2_app.bin",
         boards: [
             { label: "S2 Mini", pins: { clk: 7, cs: 11, data: 12 } },
+            { label: "Adafruit Feather", pins: { clk: 36, cs: 10, data: 35 } },
             { label: "Custom", pins: null }
         ]
     },
