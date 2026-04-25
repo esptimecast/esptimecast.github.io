@@ -1,10 +1,10 @@
 {
-  "version": "1.5.3",
+  "version": "1.5.4",
   "bins": {
-    "esp32": "https://esptimecast.github.io/bins/v1.5.3/esp32_app.bin",
-    "esp32s2": "https://esptimecast.github.io/bins/v1.5.3/esp32s2_app.bin",
-    "esp32s3": "https://esptimecast.github.io/bins/v1.5.3/esp32s3_app.bin",
-    "esp32c3": "https://esptimecast.github.io/bins/v1.5.3/esp32c3_app.bin",
-    "esp8266": "https://esptimecast.github.io/bins/v1.5.3/esp8266.bin"
+    "esp32": "https://esptimecast.github.io/bins/v1.5.4/esp32_app.bin",
+    "esp32s2": "https://esptimecast.github.io/bins/v1.5.4/esp32s2_app.bin",
+    "esp32s3": "https://esptimecast.github.io/bins/v1.5.4/esp32s3_app.bin",
+    "esp32c3": "https://esptimecast.github.io/bins/v1.5.4/esp32c3_app.bin",
+    "esp8266": "https://esptimecast.github.io/bins/v1.5.4/esp8266.bin"
   }
 }
