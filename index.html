@@ -58,7 +58,7 @@
       }
 
       .layout {
-        height: calc(100vh + 8vh);
+        height: 100vh;
         width: 100%;
         display: flex;
         align-items: center;
@@ -159,6 +159,7 @@
         line-height: 1.25;
         opacity: 0.92;
         margin-bottom: 3.2rem;
+        letter-spacing: 0.5px;
       }
 
       /* ===== BUTTON ===== */
@@ -214,7 +215,7 @@
       /* ===== STEPPER ===== */
 
       .stepper {
-        display: inline-flex;
+        display: none;
         align-items: center;
         background: var(--glass-bg);
         border: 1px solid var(--glass-border);
@@ -510,6 +511,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        color: rgba(200, 220, 255, 0.75);
       }
 
       .hint {
@@ -683,7 +685,7 @@
 
       .footer-icons {
         position: absolute;
-        bottom: 0;
+        bottom: 5vh;
         width: 100%;
         display: flex;
         justify-content: center;
@@ -975,8 +977,8 @@
       @media (max-height: 700px) {
         .footer-icons {
           top: auto;
-          bottom: -1.5rem;
-          right: 1.5rem;
+          bottom: 1.5rem;
+          right: 2rem;
           transform: none;
           flex-direction: row;
           justify-content: flex-end;
@@ -1321,7 +1323,7 @@
           <!-- SLIDE: HERO -->
           <section class="slide active" data-slide="hero">
             <div class="hero-subtitle">
-              Time &amp; weather,<br />beautifully displayed.
+              Time & weather,<br />elegantly displayed.
             </div>
             <button id="start">Install Now</button>
             <a href="#manual" class="text-link">
@@ -1534,10 +1536,10 @@
 
         <div class="hints">
           <div class="hint active">
-            Hold <b>BOOT</b> while plugging in your ESP board.<br />
+            &#8226; Hold <b>BOOT</b> while plugging in your ESP board.<br />
             Release, then press "Install Now".
           </div>
-          <div class="hint">Confirm the firmware and start installation.</div>
+          <div class="hint">&#8226; Confirm the firmware and start installation.</div>
         </div>
       </div>
       <div class="device"><img src="/img/main.png" alt="" /></div>
@@ -1779,6 +1781,7 @@
                   <li>ESP32-C3 SuperMini</li>
                   <li>Wemos S2 Mini (ESP32-S2)</li>
                   <li>ESP32-S3 WROOM-1</li>
+                  <li>ESP32-S3-Zero</li>
                 </ul>
               </div>
             </div>
