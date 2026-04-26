@@ -803,17 +803,12 @@ let progressAnimationFrame = null;
 // ================================
 async function trackInstall(chip, isUpdate) {
     try {
-        await fetch(`${SUPABASE_URL}/rest/v1/installs`, {
+        await fetch(`${SUPABASE_URL}/functions/v1/track-install`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "apikey": SUPABASE_ANON_KEY,
-                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-                "Prefer": "return=minimal"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                type: isUpdate ? "update" : "install",
                 chip: chip,
+                type: isUpdate ? "update" : "install",
                 version: manifest.version
             })
         });
