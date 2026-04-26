@@ -86,6 +86,12 @@ const manifest = {
 
 const basePath = `v${manifest.version}/`;
 
+// ================================
+// SUPABASE CONFIG
+// ================================
+const SUPABASE_URL = "https://doifjwehoimsazaqtsst.supabase.co";       
+const SUPABASE_ANON_KEY = "sb_publishable_Mmd9Dy1i7tzVh67y6PSF9g_7INZeZnk";        
+
 manifest.builds = [
     {
         chipFamily: "ESP8266",
@@ -673,14 +679,14 @@ async function flashFirmware(port, chip, firmwarePath, pinoutData = null) {
                 await sleep(100);
                 await transport.setDTR(true);
                 log(`✅ ${chip} UART reset complete.`);
-                installSuccess(true);
+                installSuccess(true, chip, keepData);
             } else {
                 log(`UART reset not available on this board: ${chip}`);
-                installSuccess(false);
+                installSuccess(false, chip, keepData);
             }
         } catch (e) {
             log("⚠️ Reboot handling failed: " + e.message);
-            installSuccess(false);
+            installSuccess(false, chip, keepData);
         }
         log("Installation complete! Device should now reboot.");
     } catch (err) {
@@ -791,6 +797,65 @@ let visualProgress = 0;
 let targetProgress = 0;
 let progressAnimationFrame = null;
 
+
+// ================================
+// INSTALL TRACKING
+// ================================
+async function trackInstall(chip, isUpdate) {
+    try {
+        await fetch(`${SUPABASE_URL}/rest/v1/installs`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+                "Prefer": "return=minimal"
+            },
+            body: JSON.stringify({
+                type: isUpdate ? "update" : "install",
+                chip: chip,
+                version: manifest.version
+            })
+        });
+        log(`📊 Tracked: ${isUpdate ? "update" : "install"} on ${chip}`);
+    } catch (e) {
+        log("⚠️ Tracking failed (non-critical): " + e.message);
+    }
+}
+
+async function fetchInstallCount() {
+    try {
+        const [countRes, seedRes] = await Promise.all([
+            fetch(`${SUPABASE_URL}/rest/v1/installs?select=id`, {
+                headers: {
+                    "apikey": SUPABASE_ANON_KEY,
+                    "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+                    "Prefer": "count=exact",
+                    "Range": "0-0"
+                }
+            }),
+            fetch(`${SUPABASE_URL}/rest/v1/config?key=eq.install_seed&select=value`, {
+                headers: {
+                    "apikey": SUPABASE_ANON_KEY,
+                    "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+                }
+            })
+        ]);
+
+        const contentRange = countRes.headers.get("Content-Range");
+        const realCount = contentRange ? parseInt(contentRange.split("/")[1]) || 0 : 0;
+
+        const seedData = await seedRes.json();
+        const seed = seedData?.[0]?.value ?? 2000;
+
+        const total = seed + realCount;
+        const el = document.getElementById("install-count");
+        if (el) el.textContent = total.toLocaleString();
+    } catch (e) {
+        log("⚠️ Count fetch failed (non-critical): " + e.message);
+    }
+}
+
 // ================================
 // SCREENS
 // ================================
@@ -799,12 +864,13 @@ async function slideFlashing() {
     resetFlashingUI();
 }
 
-function installSuccess(isUart = true) {
+function installSuccess(isUart = true, chip = "", keepData = false) {
+    trackInstall(chip, keepData);
     currentInstallContext = null;
 
     const message = isUart
-        ? "<b>ESPTimeCast</b> is now running.<br>Enjoying the project? Consider supporting it."
-        : "Press <b>RESET</b> or reconnect to start <b>ESPTimeCast</b>.<br>Enjoying the project? Consider supporting it.";
+        ? "<b>ESPTimeCast</b> is now running on your device.<br> Connect to its Wi-Fi network to complete setup."
+        : "Press <b>RESET</b> or reconnect your device.<br><b>ESPTimeCast</b> will start automatically.";
 
     document.getElementById("success-message").innerHTML = message;
 
@@ -836,11 +902,11 @@ function installSuccess(isUart = true) {
         footerIcons?.classList.add("animate");
     }, 1100);
 
-    // document.getElementById("reflash").onclick = () => {
-    //     resetSuccessAnimations();
-    //     goToSlide("hero");
-    //     resetHints();
-    // };
+    document.getElementById("flash-another").onclick = () => {
+        resetSuccessAnimations();
+        goToSlide("hero");
+        resetHints();
+    };
 }
 
 function slideBootmode() {
@@ -1247,6 +1313,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (footer && manifest.version) {
         footer.textContent = "v" + manifest.version;
     }
+    fetchInstallCount();
 });
 
 
