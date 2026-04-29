@@ -108,7 +108,7 @@ manifest.builds = [
         factory: basePath + "esp32_full.bin",
         update: basePath + "esp32_app.bin",
         boards: [
-            { label: "ESP32 Dev Module / D1 Mini ESP32", pins: { clk: 18, cs: 23, data: 5 } },
+            { label: "Dev Module / D1 Mini ESP32", pins: { clk: 18, cs: 23, data: 5 } },
             { label: "Custom", pins: null }
         ]
     },
@@ -117,7 +117,7 @@ manifest.builds = [
         factory: basePath + "esp32c3_full.bin",
         update: basePath + "esp32c3_app.bin",
         boards: [
-            { label: "SuperMini C3", pins: { clk: 4, cs: 10, data: 6 } },
+            { label: "C3 SuperMini", pins: { clk: 4, cs: 10, data: 6 } },
             { label: "Custom", pins: null }
         ]
     },
@@ -136,8 +136,9 @@ manifest.builds = [
         factory: basePath + "esp32s3_full.bin",
         update: basePath + "esp32s3_app.bin",
         boards: [
-            { label: "ESP32-S3 WROOM-1", pins: { clk: 18, cs: 16, data: 17 } },
-            { label: "ESP32-S3-Zero", pins: { clk: 12, cs: 11, data: 10 } },
+            { label: "S3 WROOM-1", pins: { clk: 18, cs: 16, data: 17 } },
+            { label: "S3-Zero", pins: { clk: 12, cs: 11, data: 10 } },
+            { label: "S3 SuperMini", pins: { clk: 4, cs: 5, data: 6 } },
             { label: "Custom", pins: null }
         ]
     }
