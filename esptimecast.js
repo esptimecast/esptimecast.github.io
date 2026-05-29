@@ -10,7 +10,6 @@ function isSupportedBrowser() {
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     const hasSerial = "serial" in navigator;
     return hasSerial && !isMobile;
-
 }
 import { Transport, ESPLoader } from './esptools.js';
 
