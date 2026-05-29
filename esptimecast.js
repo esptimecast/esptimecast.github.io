@@ -7,9 +7,10 @@
    SECTION 1-4: (UTILITIES, SLIP, PACKETS, MANIFEST) - UNCHANGED
    ============================================================ */
 function isSupportedBrowser() {
-    const isChromium = !!window.chrome && !!navigator.serial;
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    return isChromium && !isMobile;
+    const hasSerial = "serial" in navigator;
+    return hasSerial && !isMobile;
+
 }
 import { Transport, ESPLoader } from './esptools.js';
 
@@ -1165,20 +1166,22 @@ function initFooterSubtitles() {
 function enableUnsupportedMode() {
     const heroSlide = document.querySelector('[data-slide="hero"]');
     const startBtn = document.getElementById("start");
+    const textLink = document.querySelector(".text-link");
     const stepper = document.querySelector(".stepper");
     const hints = document.querySelector(".hints");
 
     // Remove Start button
     if (startBtn) startBtn.remove();
+    if (textLink) textLink.remove();
 
     // Prevent duplicate manual button
     if (!heroSlide.querySelector(".manual-btn")) {
         const manualBtn = document.createElement("a");
-        manualBtn.href = "https://github.com/mfactory-osaka/ESPTimeCast";
-        manualBtn.target = "_blank";
+        manualBtn.href = "#manual";
         manualBtn.rel = "noopener noreferrer";
         manualBtn.className = "manual-btn";
-        manualBtn.textContent = "View Manual Installation Guide";
+        manualBtn.textContent = "Manual Installation Guide ↓";
+        manualBtn.style.marginTop = '0';
 
         heroSlide.appendChild(manualBtn);
     }
