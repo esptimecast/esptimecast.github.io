@@ -3,17 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta property="og:title" content="ESPTimeCast™ - WiFi connected LED Matrix Clock & Weather Display" />
+    <meta
+      property="og:title"
+      content="ESPTimeCast™ - WiFi connected LED Matrix Clock & Weather Display"
+    />
     <meta property="og:image" content="/img/og.png" />
-    <meta property="og:image:alt" content="ESPTimeCast™ - WiFi connected LED Matrix Clock & Weather Display image from the front" />
+    <meta
+      property="og:image:alt"
+      content="ESPTimeCast™ - WiFi connected LED Matrix Clock & Weather Display image from the front"
+    />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/png" />
-    <title>ESPTimeCast™ - WiFi connected LED Matrix Clock & Weather Display</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+    <title>
+      ESPTimeCast™ - WiFi connected LED Matrix Clock & Weather Display
+    </title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
       :root {
@@ -28,7 +42,7 @@
         --glass-border: rgba(255, 255, 255, 0.12);
       }
 
-      html{
+      html {
         background: var(--bg-gradient);
       }
 
@@ -173,7 +187,7 @@
         background: var(--accent);
         color: white;
         border: none;
-        padding: 1rem 3rem;
+        padding: 1rem 2rem;
         border-radius: 999px;
         font-size: 1.1rem;
         font-weight: 600;
@@ -211,7 +225,7 @@
         box-shadow: 0 14px 40px rgba(14, 165, 233, 0.65);
       }
 
-      .text-link{
+      .text-link {
         color: white;
         margin-top: 1rem;
         font-size: 0.8rem;
@@ -625,25 +639,25 @@
         }
       }
 
-      .content-wrapper{
+      .content-wrapper {
         color: #110f2e;
         background-color: white;
         width: 100%;
       }
 
-      .content{
+      .content {
         max-width: 700px;
         padding: 1.5rem;
         margin: auto;
-        padding-top: 3rem;      
-        }
+        padding-top: 3rem;
+      }
 
-      .content h2{
+      .content h2 {
         font-size: 1.5rem;
         font-weight: 500;
       }
 
-      .content-section{
+      .content-section {
         margin-bottom: 3.5rem;
       }
 
@@ -651,11 +665,11 @@
         scroll-margin-top: 3rem;
       }
 
-      .indent{
+      .indent {
         padding-left: 1.5rem;
       }
 
-      .caption{
+      .caption {
         font-size: 0.9rem;
         color: gray;
         font-style: italic;
@@ -760,12 +774,24 @@
       }
 
       /* stagger each icon */
-      .footer-icons.animate .icon-btn:nth-child(1) { animation-delay: 0.05s; }
-      .footer-icons.animate .icon-btn:nth-child(2) { animation-delay: 0.18s; }
-      .footer-icons.animate .icon-btn:nth-child(3) { animation-delay: 0.31s; }
-      .footer-icons.animate .icon-btn:nth-child(4) { animation-delay: 0.44s; }
-      .footer-icons.animate .icon-btn:nth-child(5) { animation-delay: 0.57s; }
-      .footer-icons.animate .icon-btn:nth-child(6) { animation-delay: 0.70s; }
+      .footer-icons.animate .icon-btn:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .footer-icons.animate .icon-btn:nth-child(2) {
+        animation-delay: 0.18s;
+      }
+      .footer-icons.animate .icon-btn:nth-child(3) {
+        animation-delay: 0.31s;
+      }
+      .footer-icons.animate .icon-btn:nth-child(4) {
+        animation-delay: 0.44s;
+      }
+      .footer-icons.animate .icon-btn:nth-child(5) {
+        animation-delay: 0.57s;
+      }
+      .footer-icons.animate .icon-btn:nth-child(6) {
+        animation-delay: 0.7s;
+      }
       /* .footer-icons.animate .icon-btn:nth-child(7) { animation-delay: 0.83s; } */
 
       @keyframes iconRise {
@@ -834,7 +860,7 @@
           flex-direction: column;
         }
       }
-      
+
       .modal {
         position: fixed;
         inset: 0;
@@ -884,11 +910,13 @@
       }
 
       /* fade-out for content */
-      .modal.hide .modal-content, 
+      .modal.hide .modal-content,
       .modal.hide .terminal-window {
         opacity: 0;
         transform: translateY(-20px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
       }
 
       .controls-wrapper {
@@ -1012,951 +1040,442 @@
         border-radius: 24px;
         border: 1px solid var(--glass-border);
         backdrop-filter: blur(18px);
-        box-shadow: 0 20px 36px rgba(40, 170, 255, 0.12), 0 2px 8px rgba(0, 0, 0, 0.25);
+        box-shadow:
+          0 20px 36px rgba(40, 170, 255, 0.12),
+          0 2px 8px rgba(0, 0, 0, 0.25);
         color: white;
         opacity: 1;
         transform: translateY(0);
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
       }
 
-        /* HEADER */
-        .terminal-header {
-            padding: 0.5rem 1rem 0.5rem 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+      /* HEADER */
+      .terminal-header {
+        padding: 0.5rem 1rem 0.5rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .terminal-status {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.85rem;
+        opacity: 0.9;
+      }
+
+      /* STATUS DOT */
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #888;
+        transition: all 0.25s ease;
+      }
+
+      .dot.gray {
+        background: #888;
+      }
+
+      .dot.green {
+        background: #2ecc71;
+        box-shadow: 0 0 8px rgba(46, 204, 113, 0.7);
+      }
+
+      .dot.red {
+        background: #ff4d4d;
+        box-shadow: 0 0 8px rgba(255, 77, 77, 0.7);
+      }
+
+      /* CLOSE BUTTON */
+
+      .terminal-close {
+        border: none;
+        background: transparent;
+        color: white;
+        font-size: 1.4rem;
+        cursor: pointer;
+        opacity: 0.7;
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .terminal-close:hover {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+
+      /* TERMINAL OUTPUT */
+
+      .terminal-output {
+        flex: 1;
+        overflow-y: auto;
+        margin: 0.5rem 0 1rem 0;
+        padding: 1rem;
+        box-shadow: inset 0px 0px 24px #00000054;
+        background: rgb(0 0 0 / 20%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.78rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      /* FOOTER */
+
+      .terminal-footer {
+        padding: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.6rem;
+      }
+
+      .terminal-footer button {
+        background: rgba(255, 255, 255, 0.12);
+        border: none;
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .terminal-footer button:hover {
+        background: var(--accent);
+      }
+
+      .terminal-buttons-wrapper {
+        display: flex;
+        gap: 0.8rem;
+      }
+
+      .terminal-footer > .toggle {
+        scale: 0.8;
+      }
+
+      #terminalOutput {
+        margin: 0;
+        margin-block: unset;
+      }
+
+      .terminal-toast {
+        position: absolute;
+        right: 1rem;
+        bottom: 4.5rem;
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 6px;
+        background: rgba(0, 0, 0, 0.75);
+        color: #fff;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(6px);
+        transition:
+          opacity 0.25s ease,
+          transform 0.25s ease;
+        z-index: 5;
+      }
+
+      .terminal-toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      video {
+        margin-top: 1rem;
+        margin-bottom: 0.4rem;
+      }
+
+      .carousel {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 3.5rem;
+      }
+
+      /* left + right fade */
+      .carousel::before,
+      .carousel::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 24px;
+        height: 100%;
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      /* left fade */
+      .carousel::before {
+        left: 0;
+        background: linear-gradient(to right, #ffffff, transparent);
+      }
+
+      /* right fade */
+      .carousel::after {
+        right: 0;
+        background: linear-gradient(to left, hsl(0, 0%, 100%), transparent);
+      }
+
+      .carousel-track {
+        display: flex;
+        gap: 1rem;
+        width: max-content;
+        animation: scroll 120s linear infinite;
+      }
+
+      .carousel img {
+        height: 140px;
+        border-radius: 10px;
+        flex-shrink: 0;
+        transition: transform 0.2s ease;
+      }
+
+      .carousel img:hover {
+        filter: opacity(0.5);
+      }
+
+      /* auto scroll */
+      @keyframes scroll {
+        from {
+          transform: translateX(0);
         }
-
-        .terminal-status {
-          display: flex;
-          align-items: center;
-          gap: 0.6rem;
-          font-size: 0.85rem;
-          opacity: 0.9;
+        to {
+          transform: translateX(-50%);
         }
+      }
 
-        /* STATUS DOT */
-        .dot {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background: #888;
-          transition: all 0.25s ease;
-        }
+      .case-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 2rem;
+        margin-top: 1.5rem;
+      }
 
-        .dot.gray {
-          background: #888;
-        }
+      .case-card {
+        text-align: center;
+      }
 
-        .dot.green {
-          background: #2ecc71;
-          box-shadow: 0 0 8px rgba(46, 204, 113, 0.7);
-        }
+      .case-card img {
+        width: 100%;
+        border-radius: 12px;
+        margin-bottom: 0.4rem;
+      }
 
-        .dot.red {
-          background: #ff4d4d;
-          box-shadow: 0 0 8px rgba(255, 77, 77, 0.7);
-        }
+      .case-card h3 {
+        margin-top: 0.8rem;
+      }
 
+      .page-button {
+        color: black;
+        text-decoration: unset;
+        background: #eee;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 999px;
+        cursor: pointer;
+      }
 
-        /* CLOSE BUTTON */
-
-        .terminal-close {
-          border: none;
-          background: transparent;
-          color: white;
-          font-size: 1.4rem;
-          cursor: pointer;
-          opacity: 0.7;
-          transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-
-        .terminal-close:hover {
-          opacity: 1;
-          transform: scale(1.1);
-        }
-
-
-        /* TERMINAL OUTPUT */
-
-        .terminal-output {
-            flex: 1;
-            overflow-y: auto;
-            margin: 0.5rem 0 1rem 0;
-            padding: 1rem;
-            box-shadow: inset 0px 0px 24px #00000054;
-            background: rgb(0 0 0 / 20%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-            font-size: 0.78rem;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-
-        /* FOOTER */
-
-        .terminal-footer {
-            padding: 1rem;
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.6rem;
-        }
-
-        .terminal-footer button {
-          background: rgba(255, 255, 255, 0.12);
-          border: none;
-          padding: 0.45rem 0.9rem;
-          border-radius: 999px;
-          color: white;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-
-        .terminal-footer button:hover {
-          background: var(--accent);
-        }
-
-        .terminal-buttons-wrapper{
-            display: flex;
-            gap: 0.8rem;
-        }
-
-        .terminal-footer > .toggle{
-          scale: 0.8;
-        }
-
-        #terminalOutput{
-          margin: 0;
-          margin-block: unset;
-        }
-
-        .terminal-toast {
-            position: absolute;
-            right: 1rem;
-            bottom: 4.5rem;
-            padding: 6px 10px;
-            font-size: 12px;
-            border-radius: 6px;
-            background: rgba(0,0,0,0.75);
-            color: #fff;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(6px);
-            transition: opacity 0.25s ease, transform 0.25s ease;
-            z-index: 5;
-        }
-
-        .terminal-toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        video{
-          margin-top: 1rem;
-          margin-bottom: 0.4rem;
-        }
-
-        .carousel {
-          position: relative;
-          overflow: hidden;
-          margin-bottom: 3.5rem;
-        }
-
-        /* left + right fade */
-        .carousel::before,
-        .carousel::after {
-          content: "";
-          position: absolute;
-          top: 0;
-          width: 24px;
-          height: 100%;
-          z-index: 2;
-          pointer-events: none;
-        }
-
-        /* left fade */
-        .carousel::before {
-          left: 0;
-          background: linear-gradient(to right, #ffffff, transparent);
-        }
-
-        /* right fade */
-        .carousel::after {
-          right: 0;
-          background: linear-gradient(to left, hsl(0, 0%, 100%), transparent);
-        }
-
-        .carousel-track {
-          display: flex;
-          gap: 1rem;
-          width: max-content;
-          animation: scroll 120s linear infinite;
-        }
-
-        .carousel img {
-          height: 140px;
-          border-radius: 10px;
-          flex-shrink: 0;
-          transition: transform 0.2s ease;
-        }
-
-        .carousel img:hover {
-          filter: opacity(0.5);
-        }
-
-        /* auto scroll */
-        @keyframes scroll {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-
-        .case-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 2rem;
-          margin-top: 1.5rem;
-        }
-
-        .case-card {
-          text-align: center;
-        }
-
-        .case-card img {
-          width: 100%;
-          border-radius: 12px;
-          margin-bottom: 0.4rem;
-        }
-
-        .case-card h3 {
-          margin-top: 0.8rem;
-        }
-
-        .page-button {
-          color: black;
-          text-decoration: unset;
-          background: #eee;
-          border: none;
-          padding: 0.6rem 1.2rem;
-          border-radius: 999px;
-          cursor: pointer;
-        }
-
-        .page-button:hover{
+      .page-button:hover {
         background: var(--accent);
         color: white;
         cursor: pointer;
         transform: translateY(-2px);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
+      }
 
-        .quick-build{
-          display: flex;
-          flex-direction: column;
-          justify-items: center;
-          align-items: center;
-        }
+      .quick-build {
+        display: flex;
+        flex-direction: column;
+        justify-items: center;
+        align-items: center;
+      }
 
-        .extension > .quick-build{
-          margin-top: 1.5rem;
-          margin-bottom: 1rem;
-        }
+      .extension > .quick-build {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+      }
 
-        .extension-preview{
-          text-align: center;
-        }
+      .extension-preview {
+        text-align: center;
+      }
 
-        .extension-preview img {
-          display: inline-block;
-          width: 100%;
-          max-width: 450px;
-          height: auto;
-          border-radius: 12px;
-          box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
+      .extension-preview img {
+        display: inline-block;
+        width: 100%;
+        max-width: 450px;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
 
-        #build > .quick-build{
-          margin-top: 2rem;
-          gap: 1.5rem;
-        }
+      #build > .quick-build {
+        margin-top: 2rem;
+        gap: 1.5rem;
+      }
 
-        #board-selector {
-          display: flex;
-          gap: 0.5rem;
-          align-items: center;
-          margin-top: 1rem;
-        }
+      #board-selector {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        margin-top: 1rem;
+      }
 
-        #board-select, #custom-pins input{
-          background: transparent;
-          color: white;
-          padding: 0.3rem;
-          border-radius: 0.4rem;
-          border: 1px solid rgb(255 255 255 / 20%);
-        }
+      #board-select,
+      #custom-pins input {
+        background: transparent;
+        color: white;
+        padding: 0.3rem;
+        border-radius: 0.4rem;
+        border: 1px solid rgb(255 255 255 / 20%);
+      }
 
-        #board-select option{
-          color: black;
-        }
-      
-        #custom-pins{
-          gap: 0.5rem;
-        } 
+      #board-select option {
+        color: black;
+      }
 
-        #custom-pins input::placeholder{
-          color: white;
-        } 
+      #custom-pins {
+        gap: 0.5rem;
+      }
 
-        #custom-pins input{
-          min-width: 6ch;
-          text-align: center;
-        }
+      #custom-pins input::placeholder {
+        color: white;
+      }
+
+      #custom-pins input {
+        min-width: 6ch;
+        text-align: center;
+      }
 
       #board-select:has(option:last-child:checked) {
         max-width: 12ch;
-        } 
+      }
     </style>
   </head>
-
   <body>
     <div class="layout">
       <div class="container">
         <img src="/img/logo.svg" class="logo" alt="ESPTimeCast" />
-        <div class="logo-sub">Over <span id="install-count">—</span> successful installations worldwide</div>
+        <div class="logo-sub">
+          Over <span id="install-count">—</span> successful installations
+          worldwide
+        </div>
         <div class="stage">
           <!-- SLIDE: HERO -->
           <section class="slide active" data-slide="hero">
             <div class="hero-subtitle">
-              Time & weather,<br />elegantly displayed.
+              New home.<br />
+              Same great project.
             </div>
-            <button id="start">Install Now</button>
-            <a href="#manual" class="text-link">
-              Having trouble? Install manually ↓
-            </a>
-          </section>
+            <button id="start">esptimecast.com</button>
+            <div class="text-link">
+              You will be redirected automatically in
 
-          <!-- SLIDE: DETECTING -->
-          <section class="slide" data-slide="detecting">
-            <div class="modal-status">
-              <span class="loader" aria-hidden="true"></span>
-            </div>
-            <h2>Detecting board...</h2>
-          </section>
-
-          <!-- SLIDE: CONFIRM INSTALL -->
-          <!-- <section class="slide" data-slide="confirm">
-            <div class="icon">
-              <img src="/img/esp.png" alt="" />
-            </div>
-            <h2 id="confirm-chip"></h2>
-            <p id="confirm-version"></p>
-            <div class="actions">
-              <button id="confirm-cancel">Cancel</button>
-              <button id="confirm-install" class="primary">
-                Install firmware
-              </button>
-            </div>
-          </section> -->
-
-          <!-- SLIDE: CONFIRM INSTALL -->
-<section class="slide" data-slide="confirm">
-    <div class="icon">
-        <img src="/img/esp.png" alt="" />
-    </div>
-    <h2 id="confirm-chip"></h2>
-        <!-- Board selector (hidden by default, shown for ESP32 family) -->
-    <div id="board-selector" style="display:none">
-        <label>Board:</label>
-        <select id="board-select"></select>
-        <div id="custom-pins" style="display:none">
-            <input type="number" id="pin-clk"  min="0" max="50" placeholder="CLK">
-            <input type="number" id="pin-cs"   min="0" max="50" placeholder="CS">
-            <input type="number" id="pin-data" min="0" max="50" placeholder="DIN">
-        </div>
-    </div>
-    <p id="confirm-version"></p>
-
-    <div class="actions">
-        <button id="confirm-cancel">Cancel</button>
-        <button id="confirm-install" class="primary">
-            Install firmware
-        </button>
-    </div>
-</section>
-
-          <!-- SLIDE: FLASHING -->
-          <section class="slide" data-slide="flashing">
-            <div class="modal-status" id="flashing-status">
-              <span class="loader" id="flash-loader" aria-hidden="true"></span>
-            </div>
-            <h2 id="flashing-title">Preparing...</h2>
-            <p>This may take a few minutes.<br />Keep your device connected.</p>
-          </section>
-
-          <!-- SLIDE: SUCCESS -->
-          <section class="slide" data-slide="success">
-            <div class="modal-status">
-              <div class="checkmark_wrapper">
-                <svg class="checkmark" viewBox="0 0 48 48">
-                  <defs>
-                    <mask id="checkmask">
-                      <rect width="100%" height="100%" fill="white" />
-                      <path
-                        class="checkmark__check"
-                        d="M14.1 27.2l7.1 7.2 16.7-16.8"
-                        stroke="black"
-                        stroke-width="4"
-                        fill="none"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        transform="translate(-2 -2)"
-                      />
-                    </mask>
-                  </defs>
-
-                  <!-- Green fill -->
-                  <circle
-                    class="checkmark__fill"
-                    cx="24"
-                    cy="24"
-                    r="22"
-                    fill="#7ac142"
-                    mask="url(#checkmask)"
-                  />
-
-                  <!-- Outer animated stroke -->
-                  <circle
-                    class="checkmark__circle"
-                    cx="24"
-                    cy="24"
-                    r="22"
-                    fill="none"
-                    stroke="#7ac142"
-                    stroke-width="4"
-                  />
-                </svg>
-              </div>
-            </div>
-            <h2>You're all set!</h2>
-            <p id="success-message"></p>
-            <div class="actions">
-              <button type="button" id="flash-another" class="primary">Flash another board</button>
-            </div>
-            <!-- <div class='actions'>
-              <button type='button' class='primary' onclick="window.open('https://paypal.me/officialuphoto/5USD','_blank','noopener')">$5</button>
-              <button type='button' class='primary' onclick="window.open('https://paypal.me/officialuphoto/10USD','_blank','noopener')">$10</button>
-              <button type='button' class='primary' onclick="window.open('https://paypal.me/officialuphoto','_blank','noopener')">Custom</button>
-            </div>
-            <p style="font-size: 0.85rem; margin-top: 0.5rem; margin-bottom: 0;">❤️ Built with love in Osaka!</p> -->
-          </section>
-
-          <!-- SLIDE: ERROR -->
-          <section class="slide" data-slide="error">
-            <div class="modal-status">
-              <img src="/img/error.png" alt="" />
-            </div>
-            <h2>Something went wrong</h2>
-            <p>
-              Make sure no <b>serial monitor</b> is open.<br />
-              Reconnect the board while holding <b>BOOT</b>, then try again.
-            </p>
-            <div class="actions">
-              <button id="error-close" class="primary">Close</button>
+              <span id="countdown">15</span>s
             </div>
           </section>
-
-          <section class="slide" data-slide="unsupported">
-            <div class="icon">
-              <img src="/img/esperror.png" alt="" />
-            </div>
-            <h2 id="confirm-chip-unsupported"></h2>
-            <p class="warning">
-              No compatible firmware is available yet.<br />
-              Check the GitHub repo for manual installation options.
-            </p>
-            <div class="actions">
-              <button id="unsupported-cancel">Cancel</button>
-              <button id="unsupported-github" class="github">
-                GitHub repo
-              </button>
-            </div>
-          </section>
-
-          <section class="slide" data-slide="unknown">
-            <div class="icon">
-              <img src="/img/info.png" alt="" />
-            </div>
-            <h2>Unsupported device detected</h2>
-            <p class="warning">
-              Device connected, but not supported.<br />
-              Select an <b>ESP8266</b> or <b>ESP32</b> board and try again.
-            </p>
-            <div class="actions">
-              <button class="primary" id="unknown-close">Close</button>
-            </div>
-          </section>
-
-          <section class="slide" data-slide="boot-mode">
-            <div class="icon">
-              <img src="/img/booterror.png" alt="" />
-            </div>
-            <h2>ESP board not responding</h2>
-            <p>
-              Make sure no <b>serial monitor</b> is open. <br />
-              Reconnect the board while holding <b>BOOT</b>, then try again.
-            </p>
-            <div class="actions">
-              <button class="primary" id="boot-mode-close">Close</button>
-            </div>
-          </section>
-
-          <section class="slide" data-slide="disconnected">
-            <div class="icon">
-              <img src="/img/esperror.png" alt="" />
-            </div>
-            <h2>Device disconnected</h2>
-            <p>
-            The ESP device connection was lost.<br />
-            Please reconnect the board and try again.
-            </p>
-            <div class="actions">
-            <button class="primary" id="disconnect-close">Close</button>
-            </div>
-          </section>
-
-        </div>
-        <!-- STEPPER -->
-        <div class="stepper">
-          <div class="step active" data-step="1">
-            <div class="dot">1</div>
-            Connect
-          </div>
-          <div class="step" data-step="2">
-            <div class="dot">2</div>
-            Confirm
-          </div>
-          <div class="step" data-step="3">
-            <div class="dot">3</div>
-            Complete
-          </div>
-        </div>
-
-        <div class="hints">
-          <div class="hint active">
-            &#8226; Hold <b>BOOT</b> while plugging in your ESP board.<br />
-            Release, then press "Install Now".
-          </div>
-          <div class="hint">&#8226; Confirm the firmware and start installation.</div>
-        </div>
-      </div>
-      <div class="device"><img src="/img/main.png" alt="" /></div>
-      <footer class="footer-icons">
-        <a href="#build" rel="noopener noreferrer" class="icon-btn icon-cube" aria-label="Build your own ESPTimeCast" >
-          <img src="/img/cube.svg" alt="" aria-hidden="true" />
-        </a>
-
-        <a href="#extension" rel="noopener noreferrer" class="icon-btn icon-puzzle" aria-label="ESPTimeCast Chrome extension" >
-          <img src="/img/extension.svg" alt="" aria-hidden="true" />
-        </a>
-
-        <a href="#manual" rel="noopener noreferrer" class="icon-btn icon-tools" aria-label="Advanced setup and manual installation" >
-          <img src="/img/tools.svg" alt="" aria-hidden="true" />
-        </a>
-
-        <a
-          href="https://www.reddit.com/r/ESPTimeCast/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="icon-btn icon-reddit"
-          aria-label="Join the ESPTimeCast community on Reddit"
-        >
-          <img src="/img/reddit.svg" alt="" aria-hidden="true" />
-        </a>
-
-        <a
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="icon-btn icon-terminal"
-          aria-label="ESPTimeCast device terminal and logs"
-        >
-          <img src="/img/terminal.svg" alt="" aria-hidden="true" />
-        </a>
-        <a
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="icon-btn icon-cog"
-          aria-label="ESPTimeCast web installer settings"
-        >
-          <img src="/img/cog.svg" alt="" aria-hidden="true" />
-        </a>
-        <div class="footer-subtitle" id="footerSubtitle"></div>
-      </footer>
-    </div>
-    <!-- CONTENT -->
-     <div class="content-wrapper">
-        <div class="content">
-            <div class="content-section in-action">            
-            <h2>ESPTimeCast in action!</h2>
-            <video 
-              autoplay 
-              muted 
-              loop 
-              playsinline 
-              preload="metadata"
-              style="width: 100%; max-width: 720px; border-radius: 12px;">              
-              <source src="img/demo.mp4" type="video/mp4">              
-              Your browser does not support the video tag.
-            </video>
-            <div class="caption">Real-time clock, weather, and live data — all on a single display.</div>
-            <br>
-            <p>
-              Ready to build your own? Download the case and get started in minutes.
-            </p>
-            <div class="quick-build">
-              <a href="#build" class="page-button">
-                View Build Options ↓
-              </a>
-            </div>
-          </div>
-
-          <div class="content-section what-is">
-            <h2>What is ESPTimeCast?</h2>
-            <p>
-              ESPTimeCast™ is a sleek, WiFi-connected LED matrix display that brings real-time information to your desk. It combines accurate time, live weather, and custom data into a single, minimalist display — all configurable directly from your browser.<br><br>
-              No Arduino IDE, no apps, no complex setup — just plug it in, connect, and it works.
-            </p>
-            <div class="indent">
-              <h3>Highlights</h3>
-              <ul class="feature-list">
-                <li>🌐 <strong>Accurate Time Sync</strong> — always up-to-date via NTP</li>
-                <li>🌦 <strong>Live Weather Data</strong> — temperature, conditions, and more</li>
-                <li>⚙️ <strong>Browser-Based Setup</strong> — configure everything, no apps required</li>
-                <li>🔄 <strong>OTA Updates</strong> — update firmware wirelessly anytime</li>
-                <li>💬 <strong>Custom Messages & Timers</strong> — display alerts, reminders, or events</li>
-                <li>🧠 <strong>Smart Integrations</strong> — works with Home Assistant & other APIs</li>
-              </ul>
-            </div>
-            <br>
-            <div class="caption">Built for makers, but simple enough for anyone to use.</div>
-          </div>
-
-          <div id="extension" class="content-section extension">
-            <h2>Now Playing — Smart Control</h2>
-            <p>
-              The <strong>ESPTimeCast Companion Extension</strong> automatically detects what you're watching or listening to and displays it on your device in real time.
-            </p>
-            <p>
-              Send messages, start timers, and control your display — all directly from your browser, no Web UI required.
-            </p>
-            <div class="indent">
-              <ul class="feature-list">
-                <li>🎵 Auto-detects music & video titles (YouTube, Spotify, Twitch, and more)</li>
-                <li>⚡ Instantly sends messages and timers from the popup</li>
-                <li>🎛 Control brightness, modes, and rotation remotely</li>
-                <li>📡 Cast to multiple ESPTimeCast devices at once</li>
-                <li>🔒 Runs locally on your network — fast and private</li>
-              </ul>
-            </div>
-            <br>
-            <div class="extension-preview">
-              <img src="img/extension.png" alt="ESPTimeCast Chrome Extension">
-            </div>
-            <div class="quick-build">
-              <a href="https://chromewebstore.google.com/detail/esptimecast-companion/oddacoojadbboefmmebihlengjacbbme"
-                target="_blank"
-                class="page-button">
-                Install Chrome Extension ↗
-              </a>
-            </div>
-
-            <div class="caption">
-              Works with YouTube, Spotify, Prime Video, Vimeo, Dailymotion, Twitch, and SoundCloud.
-            </div>
-          </div>
-
-          <div class="content-section how-it-works">
-            <h2>Get Started in Minutes</h2>
-            <p>From electronic components and 3D-printed parts to a live display — it's fast and straightforward.</p>
-            <div class="indent">
-              <ul class="feature-list">
-                <li><strong>1. Connect: </strong>Plug in your device via USB and open the Web Installer.</li>
-                <li><strong>2. Install: </strong>Flash ESPTimeCast directly from your browser — no software required.</li>
-                <li><strong>3. Configure: </strong>Connect to WiFi, set your preferences, and you're ready to go.</li>
-              </ul>
-            </div>
-            <div class="quick-build">
-              <a href="#top" class="page-button">
-                Install Now ↑
-              </a>
-            </div>
-            <br>
-            <div class="caption">
-              No coding. No complex setup. Just build, flash, and enjoy.
-            </div>
-          </div>
-
-          <div class="content-section" id="manual">
-            <h2>Manual Installation</h2>
-            <p>
-              Prefer a more hands-on approach?
-            </p>
-            <p>
-              You can install ESPTimeCast manually using the Arduino IDE.
-            </p>
-            <p>
-              This method gives you full control over the firmware, board configuration, and advanced features — ideal for custom builds and experienced users.
-            </p>
-            <p>
-              Full step-by-step instructions, wiring, and advanced setup available on GitHub.
-            </p>
-            <br>
-            <div class="quick-build">
-              <a href="https://github.com/mfactory-osaka/ESPTimeCast?tab=readme-ov-file#-advanced-setup--technical-details"
-                target="_blank"
-                class="page-button">
-                Installation Guide ↗
-              </a>
-            </div>
-          </div>
-
-          <div class="content-section">
-            <h2>Features</h2>
-            <p>Everything you need, built right in.</p>
-            <div class="features-grid">
-              <div class="feature">
-                <h3>🌐 Real-Time Clock</h3>
-                <p>Always accurate with automatic NTP synchronization.</p>
-              </div>
-              <div class="feature">
-                <h3>🌦 Weather Updates</h3>
-                <p>Live temperature, conditions, and optional details like humidity.</p>
-              </div>
-              <div class="feature">
-                <h3>⚙️ Easy Web Setup</h3>
-                <p>Configure everything from your browser — no apps or installs.</p>
-              </div>
-              <div class="feature">
-                <h3>🔄 OTA Updates</h3>
-                <p>Update your device wirelessly without reconnecting cables.</p>
-              </div>
-              <div class="feature">
-                <h3>💬 Custom Messages</h3>
-                <p>Send alerts, reminders, or scrolling messages anytime.</p>
-              </div>
-              <div class="feature">
-                <h3>⏱ Timers & Countdowns</h3>
-                <p>Built-in timer system for events, reminders, or daily use.</p>
-              </div>
-              <div class="feature">
-                <h3>🧠 Smart Integrations</h3>
-                <p>Works with Home Assistant and custom API endpoints.</p>
-              </div>
-              <div class="feature">
-                <h3>🌙 Auto Dimming</h3>
-                <p>Adjust brightness automatically based on time or schedule.</p>
-              </div>
-            </div>
-            <br><br>
-            <div class="caption">And much more — explore advanced features and customization once your device is up and running.</div>
-          </div>
-
-          <div class="content-section">
-            <h2>Supported Hardware</h2>
-            <p>
-              ESPTimeCast supports popular ESP8266 and ESP32-based development boards.
-              The Web Installer automatically detects and configures compatible devices.
-            </p>
-            <div class="indent">
-              <div class="hardware-block">
-                <h3>Compatible Chip Families</h3>
-                <ul>
-                  <li>ESP8266</li>
-                  <li>ESP32</li>
-                  <li>ESP32-S2</li>
-                  <li>ESP32-C3</li>
-                  <li>ESP32-S3</li>
-                </ul>
-              </div>
-
-              <div class="hardware-block">
-                <h3>✅ Officially Tested Boards</h3>
-                <ul>
-                  <li>Wemos D1 Mini (ESP8266)</li>
-                  <li>ESP32 Dev Module</li>
-                  <li>ESP32-C3 SuperMini</li>
-                  <li>Wemos S2 Mini (ESP32-S2)</li>
-                  <li>ESP32-S3 WROOM-1</li>
-                  <li>ESP32-S3 SuperMini</li>
-                  <li>ESP32-S3-Zero</li>
-                </ul>
-              </div>
-            </div>
-            <p>Other boards using these chip families may also work, depending on pin layout and USB configuration.</p>
-            <div class="caption">Looking for wiring details, pin mappings, or manual installation?<br>
-              <a href="https://github.com/mfactory-osaka/ESPTimeCast" target="_blank">
-              View full documentation on GitHub ↗
-              </a>
-            </div>
-          </div>
-
-          <div id="build" class="content-section">
-            <h2>Build Your Own ESPTimeCast</h2>
-            <p class="subtitle">
-              Join 1,300+ makers building their own ESPTimeCast worldwide.
-            </p>
-
-            <div class="carousel" id="buildCarousel">
-              <div class="carousel-track">
-
-                <img src="img/builds/1.png" alt="ESPTimeCast build">
-                <img src="img/builds/2.png" alt="ESPTimeCast build">
-                <img src="img/builds/3.png" alt="ESPTimeCast build">
-                <img src="img/builds/4.png" alt="ESPTimeCast build">
-                <img src="img/builds/5.png" alt="ESPTimeCast build">
-                <img src="img/builds/6.png" alt="ESPTimeCast build">
-                <img src="img/builds/7.png" alt="ESPTimeCast build">
-                <img src="img/builds/8.png" alt="ESPTimeCast build">
-                <img src="img/builds/9.png" alt="ESPTimeCast build">
-                <img src="img/builds/10.png" alt="ESPTimeCast build">
-                <img src="img/builds/11.png" alt="ESPTimeCast build">
-                <img src="img/builds/12.png" alt="ESPTimeCast build">
-
-                <!-- duplicate for seamless loop -->
-                <img src="img/builds/1.png" alt="">
-                <img src="img/builds/2.png" alt="">
-                <img src="img/builds/3.png" alt="">
-                <img src="img/builds/4.png" alt="">
-
-              </div>
-            </div>
-
-            <section class="case-showcase">
-              <h3>Choose Your Style</h3>
-              <div class="case-grid">
-                <div class="case-card">
-                  <img src="img/v1.png" alt="ESPTimeCast Retro Case">
-                  <div class="caption"><strong>Retro:</strong> Classic design inspired by vintage displays.</div>
-                </div>
-                <div class="case-card">
-                  <img src="img/v2.png" alt="ESPTimeCast Stylish Case">
-                  <div class="caption"><strong>Stylish:</strong> Clean, modern look for any setup.</div>
-                </div>
-              </div>
-            </section>
-            <br>
-
-            <p class="case-text">
-              Build your own ESPTimeCast with the official case — includes both <strong>Retro</strong> and <strong>Stylish</strong> designs, ready to download and 3D print.
-            </p>
-            <div class="quick-build">
-              <a class="page-button" href="https://www.printables.com/model/1344276-esptimecast-wi-fi-clock-weather-display"
-                target="_blank"
-                class="button-primary">
-                Download on Printables ↗
-              </a>
-              <a class="page-button" href="https://cults3d.com/en/3d-model/gadget/wifi-connected-led-matrix-clock-and-weather-station-esp8266-and-max7219"
-                target="_blank"
-                class="button-secondary">
-                Download on Cults3D ↗
-              </a>
-            </div>
-            </div>
-            <div class="support">
-              <p class="caption">
-                Enjoying ESPTimeCast? You can support the project by downloading the case,<br>
-                starring the repo, or contributing directly:
-                <a href="https://github.com/mfactory-osaka/ESPTimeCast"
-                  target="_blank">
-                  ⭐ Star on GitHub ↗
-                </a>
-                &nbsp;&nbsp;
-                <a href="https://github.com/mfactory-osaka/ESPTimeCast#%EF%B8%8F-support-this-project"
-                  target="_blank">
-                  ❤️ Support the Project ↗
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-     </div>
-
-    <!-- MODAL -->
-    <div id="settings-modal" class="modal">
-      <div class="modal-content">
-        <h2>Installer Settings</h2>
-        <p>
-          By default, installation erases all data, including Wi-Fi and saved
-          settings.<br /><br />
-          For new installs, this is recommended.<br /><br />
-          Disable the option below only if you want to preserve your current
-          configuration.
-        </p>
-        <div class="controls-wrapper">
-          <label class="toggle">
-            <input type="checkbox" id="erase-all-data" checked />
-            <span class="slider round"></span>
-            <span class="toggle-label">Erase All Data</span>
-          </label>
-          <div class="actions">
-            <button id="close-settings">Close</button>
-          </div>
         </div>
       </div>
     </div>
-
-    <!-- TERMINAL MODAL -->
-    <div id="terminalModal" class="modal">
-      <div class="terminal-backdrop"></div>
-
-      <div class="terminal-window">
-
-        <div class="terminal-header">
-          <div class="terminal-status">
-            <span id="termStatusDot" class="dot gray"></span>
-            <span id="termStatusText">Connecting…</span>
-          </div>
-
-          <button id="terminalClose" class="terminal-close">×</button>
-        </div>
-
-        <pre id="terminalOutput" class="terminal-output"></pre>
-
-        <div class="terminal-footer">
-          <label class="toggle">
-            <input type="checkbox" id="terminalAutoscroll" checked />
-            <span class="slider round"></span>
-            <span class="toggle-label">Autoscroll</span>
-          </label>
-          <div class="terminal-buttons-wrapper">
-            <button id="terminalClear">Clear</button>
-            <button id="terminalCopy">Copy</button>
-            <button id="terminalDownload">Download</button>
-          </div>
-        </div>
-        <div id="terminalToast" class="terminal-toast"></div>
-      </div>
-    </div>
-    </div>
-    <script>
-    const carousel = document.getElementById("buildCarousel");
-    const track = carousel.querySelector(".carousel-track");
-
-    carousel.addEventListener("mouseenter", () => {
-      track.style.animationPlayState = "paused";
-    });
-
-    carousel.addEventListener("mouseleave", () => {
-      track.style.animationPlayState = "running";
-    });
-
-    // also pause on touch (mobile)
-    carousel.addEventListener("touchstart", () => {
-      track.style.animationPlayState = "paused";
-    });
-    </script>
-    <script type="module" src="esptimecast.js?v=1.6.1"></script>
   </body>
+  <script>
+    // ================================
+    // SUPABASE CONFIG
+    // ================================
+    const SUPABASE_URL = "https://doifjwehoimsazaqtsst.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_Mmd9Dy1i7tzVh67y6PSF9g_7INZeZnk";
+    // ================================
+    // INSTALL TRACKING
+    // ================================
+    async function trackInstall(chip, isUpdate) {
+      try {
+        await fetch(`${SUPABASE_URL}/functions/v1/track-install`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chip: chip,
+            type: isUpdate ? "update" : "install",
+            version: manifest.version,
+          }),
+        });
+        log(`📊 Tracked: ${isUpdate ? "update" : "install"} on ${chip}`);
+      } catch (e) {
+        log("⚠️ Tracking failed (non-critical): " + e.message);
+      }
+    }
+
+    async function fetchInstallCount() {
+      try {
+        const [countRes, seedRes] = await Promise.all([
+          fetch(`${SUPABASE_URL}/rest/v1/installs?select=id`, {
+            headers: {
+              apikey: SUPABASE_ANON_KEY,
+              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+              Prefer: "count=exact",
+              Range: "0-0",
+            },
+          }),
+          fetch(
+            `${SUPABASE_URL}/rest/v1/config?key=eq.install_seed&select=value`,
+            {
+              headers: {
+                apikey: SUPABASE_ANON_KEY,
+                Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+              },
+            },
+          ),
+        ]);
+
+        const contentRange = countRes.headers.get("Content-Range");
+        const realCount = contentRange
+          ? parseInt(contentRange.split("/")[1]) || 0
+          : 0;
+
+        const seedData = await seedRes.json();
+        const seed = seedData?.[0]?.value ?? 2000;
+
+        const total = seed + realCount;
+        const el = document.getElementById("install-count");
+        if (el) el.textContent = total.toLocaleString();
+      } catch (e) {
+        log("⚠️ Count fetch failed (non-critical): " + e.message);
+      }
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add("loaded");
+    });
+    // Load install count
+
+    fetchInstallCount();
+
+    // Redirect countdown
+
+    let seconds = 15;
+
+    const countdownEl = document.getElementById("countdown");
+
+    const timer = setInterval(() => {
+      seconds--;
+
+      if (countdownEl) {
+        countdownEl.textContent = seconds;
+      }
+
+      if (seconds <= 0) {
+        clearInterval(timer);
+
+        window.location.href = "https://esptimecast.com";
+      }
+    }, 1000);
+
+    // Button click
+
+    document.getElementById("start")?.addEventListener("click", () => {
+      window.location.href = "https://esptimecast.com";
+    });
+  </script>
 </html>
